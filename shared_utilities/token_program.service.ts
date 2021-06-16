@@ -72,7 +72,6 @@ export class TokenProgramService {
       }),
     );
 
-
     const keys: AccountMeta[] = [
       <AccountMeta>{ pubkey: tokenAccountAddress, isSigner: false, isWritable: true },
       <AccountMeta>{ pubkey: tokenMintAddress, isSigner: false, isWritable: false },
@@ -88,7 +87,7 @@ export class TokenProgramService {
     return transaction
   }
 
-  static async createAssociatedTokenAccount(
+  static async createAssociatedTokenAccountTransaction(
     payerAddress: PublicKey,
     ownerAddress: PublicKey,
     tokenMintAddress: PublicKey,
@@ -109,6 +108,52 @@ export class TokenProgramService {
       keys,
       data,
       programId: ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
+    }))
+    return transaction
+  }
+
+  static async createTransferTransaction(
+    ownerAddress: PublicKey,
+    sourceTokenAddress: PublicKey,
+    targetTokenAddress: PublicKey,
+    amount: number,
+  ): Promise<Transaction> {
+    const transaction: Transaction = new Transaction()
+    const keys: AccountMeta[] = [
+      <AccountMeta>{ pubkey: sourceTokenAddress, isSigner: false, isWritable: true },
+      <AccountMeta>{ pubkey: targetTokenAddress, isSigner: false, isWritable: true },
+      <AccountMeta>{ pubkey: ownerAddress, isSigner: true, isWritable: false },
+    ];
+    const data = SolanaService.encodeTokenInstruction({ transfer: {
+      amount
+    }})
+    transaction.add(new TransactionInstruction({
+      keys,
+      data,
+      programId: TOKEN_PROGRAM_ID
+    }))
+    return transaction
+  }
+
+  static async createMintToTransaction(
+    authorityAddress: PublicKey,
+    tokenMintAddress: PublicKey,
+    targetTokenAddress: PublicKey,
+    amount: number,
+  ): Promise<Transaction> {
+    const transaction: Transaction = new Transaction()
+    const keys: AccountMeta[] = [
+      <AccountMeta>{ pubkey: tokenMintAddress, isSigner: false, isWritable: true },
+      <AccountMeta>{ pubkey: targetTokenAddress, isSigner: false, isWritable: true },
+      <AccountMeta>{ pubkey: authorityAddress, isSigner: true, isWritable: false },
+    ];
+    const data = SolanaService.encodeTokenInstruction({ mintTo: {
+      amount
+    }})
+    transaction.add(new TransactionInstruction({
+      keys,
+      data,
+      programId: TOKEN_PROGRAM_ID
     }))
     return transaction
   }
