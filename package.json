@@ -1,0 +1,29 @@
+{
+  "name": "solana-anchor-examples",
+  "version": "0.1.0",
+  "description": "Sample programs to demonstrate for developing Solana Programs using Anchor framework",
+  "main": "index.js",
+  "scripts": {
+    "setup": "npm install && npm run setup-prequisites",
+    "setup-prequisites": "node ./node_modules/ts-node/dist/bin -- ./setup-prequisites.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tungnguyen17/solana-anchor-examples.git"
+  },
+  "author": "Tung Nguyen",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/tungnguyen17/solana-anchor-examples/issues"
+  },
+  "homepage": "https://github.com/tungnguyen17/solana-anchor-examples#readme",
+  "dependencies": {
+    "mz": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/mz": "^2.7.3",
+    "dot-env": "^0.0.1",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
+  }
+}
