@@ -1,0 +1,15 @@
+{
+  "name": "transfer_spl_token_example",
+  "version": "1.0.0",
+  "description": "Transfer SPL token using SPL program example",
+  "author": "Tung Nguyen",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "anchor build",
+    "clean": "rm -rf ./target",
+    "deploy": "solana program deploy ./target/deploy/transfer_spl_token.so",
+    "publish": "npm run build && npm run deploy",
+    "publish_with_clean": "npm run clean && npm run publish",
+    "test": "node ./node_modules/ts-node/dist/bin -- ./tests/transfer_spl_token.ts"
+  }
+}

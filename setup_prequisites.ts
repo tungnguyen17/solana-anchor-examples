@@ -1,7 +1,8 @@
 import path from 'path'
-import { FileSystemService } from './shared-utilities/filesystem.service'
+import { FileSystemService } from './shared_utilities/filesystem.service'
 
 const samples: string[] = [
+  'transfer_spl_token_example'
 ];
 
 (async function () {

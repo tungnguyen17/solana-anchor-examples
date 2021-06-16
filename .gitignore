@@ -1,6 +1,12 @@
-# Intermediate file & folders
+# Root folder
 /dist
 /node_modules
 
 /Cargo.lock
 /package-lock.json
+
+# Example specific folder
+/*/node_modules
+/*/target
+/*/Cargo.lock
+/*/package-lock.json
