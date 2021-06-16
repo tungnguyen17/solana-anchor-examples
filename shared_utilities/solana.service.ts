@@ -3,6 +3,9 @@ import * as BufferLayout from './buffer-layout'
 import * as ExtendedLayout from './extended_layout'
 import { HashService } from './hash.service'
 
+const ASSOTICATE_TOKEN_LAYOUT = BufferLayout.struct([
+])
+
 const MULTISIG_LAYOUT = BufferLayout.union(BufferLayout.greedy(1, 'instruction'))
 MULTISIG_LAYOUT.addVariant(
   0,
@@ -170,6 +173,11 @@ SYSTEM_PROGRAM_LAYOUT.addVariant(
 
 export class SolanaService {
 
+  static encodeAssociateTokenInstruction(instruction: any
+  ): Buffer {
+    return encodeInstruction(instruction, ASSOTICATE_TOKEN_LAYOUT)
+  }
+
   static encodeMultisigInstruction(method: string, instruction: any
   ): Buffer {
     return encodeAnchorInstruction(method, instruction, MULTISIG_LAYOUT)
@@ -177,12 +185,12 @@ export class SolanaService {
 
   static encodeTokenInstruction(instruction: any
   ): Buffer {
-    return encodeInstruction(instruction, TOKEN_PROGRAM_LAYOUT)
+    return encodeUnionInstruction(instruction, TOKEN_PROGRAM_LAYOUT)
   }
 
   static encodeSystemProgramInstruction(instruction: any
   ): Buffer {
-    return encodeInstruction(instruction, SYSTEM_PROGRAM_LAYOUT)
+    return encodeUnionInstruction(instruction, SYSTEM_PROGRAM_LAYOUT)
   }
 
   static async getAccountBalance(connection: Connection, address: PublicKey) {
@@ -237,10 +245,17 @@ function encodeAnchorInstruction(method: string, instruction: any, layout: Buffe
   return Buffer.from([...truncatedPrefix, ...buffer.slice(0, span)])
 }
 
-function encodeInstruction(instruction: any, layout: BufferLayout.Union
-  ): Buffer {
-    const instructionMaxSpan = Math.max(...Object.values(layout.registry).map((r: any) => r.span))
-    const buffer = Buffer.alloc(instructionMaxSpan)
-    const span = layout.encode(instruction, buffer)
-    return buffer.slice(0, span)
-  }
+function encodeInstruction(instruction: any, layout: BufferLayout.struct
+): Buffer {
+  const buffer = Buffer.alloc(layout.span)
+  const span = layout.encode(instruction, buffer)
+  return buffer.slice(0, span)
+}
+
+function encodeUnionInstruction(instruction: any, layout: BufferLayout.Union
+): Buffer {
+  const instructionMaxSpan = Math.max(...Object.values(layout.registry).map((r: any) => r.span))
+  const buffer = Buffer.alloc(instructionMaxSpan)
+  const span = layout.encode(instruction, buffer)
+  return buffer.slice(0, span)
+}

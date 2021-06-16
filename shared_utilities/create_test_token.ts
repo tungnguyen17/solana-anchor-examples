@@ -11,23 +11,34 @@ import path from 'path'
 
   const accountPath = path.join(__dirname, '..', 'shared_accounts', 'token_account.json')
   const isAccountExists = await FileSystemService.exists(accountPath)
-  const tokenAccount = isAccountExists
+  const tokenMintAccount = isAccountExists
     ? await SolanaConfigService.readAccountFromFile(accountPath)
     : Keypair.generate()
   if (!isAccountExists) {
-    SolanaConfigService.writeAccountToFile(accountPath, tokenAccount)
+    SolanaConfigService.writeAccountToFile(accountPath, tokenMintAccount)
   }
 
-  const createTokenTransaction = TokenProgramService.createInitializeMintTransaction(
+  const createTokenMintTransaction = await TokenProgramService.createInitializeMintTransaction(
     defaultAccount.publicKey,
-    tokenAccount.publicKey,
+    tokenMintAccount.publicKey,
     6,
     defaultAccount.publicKey,
-    defaultAccount.publicKey,
+    null,
   )
-
-  await sendAndConfirmTransaction(connection, createTokenTransaction, [
+  await sendAndConfirmTransaction(connection, createTokenMintTransaction, [
     defaultAccount,
-    tokenAccount
+    tokenMintAccount
   ])
+  console.log('created TokenMint')
+
+  const createTokenAccountTransaction = await TokenProgramService.createAssociatedTokenAccount(
+    defaultAccount.publicKey,
+    defaultAccount.publicKey,
+    tokenMintAccount.publicKey
+  )
+  await sendAndConfirmTransaction(connection, createTokenAccountTransaction, [
+    defaultAccount,
+  ])
+  console.log('created TokenAccount')
+
 })()
