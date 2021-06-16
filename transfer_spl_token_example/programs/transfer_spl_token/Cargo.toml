@@ -1,5 +1,5 @@
 [package]
-name = "tfx-transfer_spl_token"
+name = "transfer_spl_token"
 version = "0.1.0"
 authors = ["Tung Nguyen"]
 license = "Apache-2.0"

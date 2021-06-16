@@ -9,7 +9,9 @@
     "clean": "rm -rf ./target",
     "deploy": "solana program deploy ./target/deploy/transfer_spl_token.so",
     "publish": "npm run build && npm run deploy",
-    "publish_with_clean": "npm run clean && npm run publish",
-    "test": "node ./node_modules/ts-node/dist/bin -- ./tests/transfer_spl_token.ts"
+    "publish_clean": "npm run clean && npm run publish",
+    "test": "node ./node_modules/ts-node/dist/bin -- ./tests/transfer_spl_token.ts",
+    "verify": "npm run publish && npm run test",
+    "verify_clean": "npm run publish_clean && npm run test"
   }
 }

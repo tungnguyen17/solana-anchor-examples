@@ -11,6 +11,10 @@ export class FileSystemService {
     await fs.symlink(sourcePath, tartgetPath, type)
   }
 
+  static async exists(path: string): Promise<boolean> {
+    return fs.exists(path)
+  }
+
   static async readFromFile(path: string) {
     await fs.readFile(path, { encoding: 'utf8' })
   }
