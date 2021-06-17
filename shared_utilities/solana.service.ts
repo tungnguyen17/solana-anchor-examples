@@ -1,10 +1,5 @@
 import { Connection, Keypair, PublicKey } from '@solana/web3.js'
 import * as BufferLayout from './buffer-layout'
-import * as ExtendedLayout from './extended_layout'
-import { HashService } from './hash.service'
-
-const ASSOTICATE_TOKEN_LAYOUT = BufferLayout.struct([
-])
 
 const MULTISIG_LAYOUT = BufferLayout.union(BufferLayout.greedy(1, 'instruction'))
 MULTISIG_LAYOUT.addVariant(
@@ -35,34 +30,6 @@ MULTISIG_LAYOUT.addVariant(
   'changeOwners'
 )
 
-const TOKEN_PROGRAM_LAYOUT = BufferLayout.union(BufferLayout.u8('instruction'))
-TOKEN_PROGRAM_LAYOUT.addVariant(
-  0,
-  BufferLayout.struct([
-    BufferLayout.u8('decimals'),
-    ExtendedLayout.publicKey('mintAuthority'),
-    BufferLayout.u8('freezeAuthorityOption'),
-    ExtendedLayout.publicKey('freezeAuthority')
-  ]),
-  'initializeMint'
-)
-TOKEN_PROGRAM_LAYOUT.addVariant(1, BufferLayout.struct([]), 'initializeAccount')
-TOKEN_PROGRAM_LAYOUT.addVariant(
-  3,
-  BufferLayout.struct([BufferLayout.nu64('amount')]),
-  'transfer'
-)
-TOKEN_PROGRAM_LAYOUT.addVariant(
-  7,
-  BufferLayout.struct([BufferLayout.nu64('amount')]),
-  'mintTo'
-)
-TOKEN_PROGRAM_LAYOUT.addVariant(
-  8,
-  BufferLayout.struct([BufferLayout.nu64('amount')]),
-  'burn'
-)
-
 const SYSTEM_PROGRAM_LAYOUT = BufferLayout.union(BufferLayout.u32('instruction'))
 SYSTEM_PROGRAM_LAYOUT.addVariant(
   0,
@@ -70,7 +37,7 @@ SYSTEM_PROGRAM_LAYOUT.addVariant(
     BufferLayout.u32('instruction'),
     BufferLayout.ns64('lamports'),
     BufferLayout.ns64('space'),
-    ExtendedLayout.publicKey('programId'),
+    BufferLayout.publicKey('programId'),
   ]),
   'createAccount'
 )
@@ -78,7 +45,7 @@ SYSTEM_PROGRAM_LAYOUT.addVariant(
   1,
   BufferLayout.struct([
     BufferLayout.u32('instruction'),
-    ExtendedLayout.publicKey('programId'),
+    BufferLayout.publicKey('programId'),
   ]),
   'assign'
 )
@@ -95,10 +62,10 @@ SYSTEM_PROGRAM_LAYOUT.addVariant(
   BufferLayout.struct([
     BufferLayout.u32('instruction'),
     BufferLayout.blob(32, 'base'),
-    ExtendedLayout.rustString('seed'),
+    BufferLayout.rustString('seed'),
     BufferLayout.ns64('lamports'),
     BufferLayout.ns64('space'),
-    ExtendedLayout.publicKey('programId'),
+    BufferLayout.publicKey('programId'),
   ]),
   'createAccountWithSeed'
 )
@@ -144,9 +111,9 @@ SYSTEM_PROGRAM_LAYOUT.addVariant(
   BufferLayout.struct([
     BufferLayout.u32('instruction'),
     BufferLayout.blob(32, 'base'),
-    ExtendedLayout.rustString('seed'),
+    BufferLayout.rustString('seed'),
     BufferLayout.ns64('space'),
-    ExtendedLayout.publicKey('programId'),
+    BufferLayout.publicKey('programId'),
   ]),
   'allocateAccountWithSeed'
 )
@@ -155,8 +122,8 @@ SYSTEM_PROGRAM_LAYOUT.addVariant(
   BufferLayout.struct([
     BufferLayout.u32('instruction'),
     BufferLayout.blob(32, 'base'),
-    ExtendedLayout.rustString('seed'),
-    ExtendedLayout.publicKey('programId'),
+    BufferLayout.rustString('seed'),
+    BufferLayout.publicKey('programId'),
   ]),
   'assignAccountWithSeed'
 )
@@ -165,34 +132,13 @@ SYSTEM_PROGRAM_LAYOUT.addVariant(
   BufferLayout.struct([
     BufferLayout.u32('instruction'),
     BufferLayout.ns64('lamports'),
-    ExtendedLayout.rustString('seed'),
-    ExtendedLayout.publicKey('programId'),
+    BufferLayout.rustString('seed'),
+    BufferLayout.publicKey('programId'),
   ]),
   'transferWithSeed'
 )
 
 export class SolanaService {
-
-  static encodeAssociateTokenInstruction(instruction: any
-  ): Buffer {
-    return encodeInstruction(instruction, ASSOTICATE_TOKEN_LAYOUT)
-  }
-
-  static encodeMultisigInstruction(method: string, instruction: any
-  ): Buffer {
-    return encodeAnchorInstruction(method, instruction, MULTISIG_LAYOUT)
-  }
-
-  static encodeTokenInstruction(instruction: any
-  ): Buffer {
-    return encodeUnionInstruction(instruction, TOKEN_PROGRAM_LAYOUT)
-  }
-
-  static encodeSystemProgramInstruction(instruction: any
-  ): Buffer {
-    return encodeUnionInstruction(instruction, SYSTEM_PROGRAM_LAYOUT)
-  }
-
   static async getAccountBalance(connection: Connection, address: PublicKey) {
     const lamports = await connection.getBalance(address)
     const sols = lamports / 1000000000
@@ -233,29 +179,4 @@ export class SolanaService {
     }
     return true
   }
-}
-
-function encodeAnchorInstruction(method: string, instruction: any, layout: BufferLayout.Union
-): Buffer {
-  const prefix = HashService.sha256(`global:${method}`)
-  const truncatedPrefix = prefix.slice(0, 8)
-  const instructionMaxSpan = Math.max(...Object.values(layout.registry).map((r: any) => r.span))
-  const buffer = Buffer.alloc(instructionMaxSpan)
-  const span = layout.encode(instruction, buffer)
-  return Buffer.from([...truncatedPrefix, ...buffer.slice(0, span)])
-}
-
-function encodeInstruction(instruction: any, layout: BufferLayout.struct
-): Buffer {
-  const buffer = Buffer.alloc(layout.span)
-  const span = layout.encode(instruction, buffer)
-  return buffer.slice(0, span)
-}
-
-function encodeUnionInstruction(instruction: any, layout: BufferLayout.Union
-): Buffer {
-  const instructionMaxSpan = Math.max(...Object.values(layout.registry).map((r: any) => r.span))
-  const buffer = Buffer.alloc(instructionMaxSpan)
-  const span = layout.encode(instruction, buffer)
-  return buffer.slice(0, span)
 }

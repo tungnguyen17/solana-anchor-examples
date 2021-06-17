@@ -1,4 +1,4 @@
-import { Connection, Keypair } from '@solana/web3.js'
+import { Connection } from '@solana/web3.js'
 import { SolanaConfigService } from './solana_config.service'
 import { TestAccountService } from './test_account.service'
 import { TokenProgramService } from './token_program.service'

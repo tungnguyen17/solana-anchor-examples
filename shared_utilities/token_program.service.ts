@@ -1,8 +1,6 @@
-import { AccountMeta, Connection, Keypair, PublicKey, sendAndConfirmTransaction, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { Connection, Keypair, PublicKey, sendAndConfirmTransaction } from '@solana/web3.js'
 import { SolanaService } from './solana.service'
-
-const ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID: PublicKey = new PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL')
-const TOKEN_PROGRAM_ID: PublicKey = new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA')
+import { ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID, TokenProgramInstructionService, TOKEN_PROGRAM_ID } from './token_program_instruction.service'
 
 export class TokenProgramService {
   static async createTokenAccount(
@@ -17,39 +15,16 @@ export class TokenProgramService {
       console.log(`SKIPPED: Token Account ${tokenMintAccount.publicKey.toBase58()} is already existed.`)
       return tokenMintAccount
     }
-    const transaction = new Transaction()
-    transaction.add(
-      SystemProgram.createAccount({
-        fromPubkey: payerAccount.publicKey,
-        newAccountPubkey: tokenMintAccount.publicKey,
-        lamports: 10000000,
-        space: 82,
-        programId: TOKEN_PROGRAM_ID,
-      }),
-    )
-
-    const keys: AccountMeta[] = [
-      <AccountMeta>{ pubkey: tokenMintAccount.publicKey, isSigner: false, isWritable: true },
-      <AccountMeta>{ pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false }
-    ]
-    const data = SolanaService.encodeTokenInstruction({
-      initializeMint: {
-        decimals,
-        mintAuthority: mintAuthorityAddress.toBuffer(),
-        freezeAuthorityOption: freezeAuthorityAddress == null ? 0 : 1,
-        freezeAuthority: (freezeAuthorityAddress == null ? new PublicKey(0) : freezeAuthorityAddress).toBuffer(),
-      }
-    })
-    transaction.add(
-      new TransactionInstruction({
-        keys,
-        programId: TOKEN_PROGRAM_ID,
-        data,
-      })
+    const transaction = await TokenProgramInstructionService.createInitializeMintTransaction(
+      payerAccount.publicKey,
+      tokenMintAccount.publicKey,
+      decimals,
+      mintAuthorityAddress,
+      freezeAuthorityAddress,
     )
     await sendAndConfirmTransaction(connection, transaction, [
       payerAccount,
-      tokenMintAccount
+      tokenMintAccount,
     ])
     console.log(`Created Token Account ${tokenMintAccount.publicKey.toBase58()}`)
     return tokenMintAccount
@@ -66,24 +41,13 @@ export class TokenProgramService {
       console.log(`SKIPPED: Associated Token Account ${tokenAccountAddress.toBase58()} of Account ${ownerAddress.toBase58()} is already existed.`)
       return tokenAccountAddress
     }
-    const transaction: Transaction = new Transaction()
-    const keys: AccountMeta[] = [
-      <AccountMeta>{ pubkey: payerAccount.publicKey, isSigner: true, isWritable: true },
-      <AccountMeta>{ pubkey: tokenAccountAddress, isSigner: false, isWritable: true },
-      <AccountMeta>{ pubkey: ownerAddress, isSigner: false, isWritable: false },
-      <AccountMeta>{ pubkey: tokenMintAddress, isSigner: false, isWritable: false },
-      <AccountMeta>{ pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
-      <AccountMeta>{ pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
-      <AccountMeta>{ pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
-    ]
-    const data = SolanaService.encodeAssociateTokenInstruction({})
-    transaction.add(new TransactionInstruction({
-      keys,
-      data,
-      programId: ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID
-    }))
+    const transaction = await TokenProgramInstructionService.createAssociatedTokenAccountTransaction(
+      payerAccount.publicKey,
+      ownerAddress,
+      tokenMintAddress,
+    )
     await sendAndConfirmTransaction(connection, transaction, [
-      payerAccount
+      payerAccount,
     ])
     console.log(`Created Associated Token Account ${tokenAccountAddress.toBase58()} for Account ${ownerAddress.toBase58()}`)
     return tokenAccountAddress
@@ -97,20 +61,12 @@ export class TokenProgramService {
     recipientTokenAddress: PublicKey,
     amount: number,
   ): Promise<boolean> {
-    const transaction: Transaction = new Transaction()
-    const keys: AccountMeta[] = [
-      <AccountMeta>{ pubkey: tokenMintAddress, isSigner: false, isWritable: true },
-      <AccountMeta>{ pubkey: recipientTokenAddress, isSigner: false, isWritable: true },
-      <AccountMeta>{ pubkey: authorityAccount.publicKey, isSigner: true, isWritable: false },
-    ];
-    const data = SolanaService.encodeTokenInstruction({ mintTo: {
-      amount
-    }})
-    transaction.add(new TransactionInstruction({
-      keys,
-      data,
-      programId: TOKEN_PROGRAM_ID
-    }))
+    const transaction = await TokenProgramInstructionService.createMintToTransaction(
+      authorityAccount.publicKey,
+      tokenMintAddress,
+      recipientTokenAddress,
+      amount,
+    )
     const signers = [
       payerAccount
     ]
@@ -129,20 +85,12 @@ export class TokenProgramService {
     recipientTokenAddress: PublicKey,
     amount: number,
   ): Promise<boolean> {
-    const transaction: Transaction = new Transaction()
-    const keys: AccountMeta[] = [
-      <AccountMeta>{ pubkey: ownerTokenAddress, isSigner: false, isWritable: true },
-      <AccountMeta>{ pubkey: recipientTokenAddress, isSigner: false, isWritable: true },
-      <AccountMeta>{ pubkey: ownerAccount.publicKey, isSigner: true, isWritable: false },
-    ];
-    const data = SolanaService.encodeTokenInstruction({ transfer: {
-      amount
-    }})
-    transaction.add(new TransactionInstruction({
-      keys,
-      data,
-      programId: TOKEN_PROGRAM_ID
-    }))
+    const transaction = await TokenProgramInstructionService.createTransferTransaction(
+      ownerAccount.publicKey,
+      ownerTokenAddress,
+      recipientTokenAddress,
+      amount,
+    )
     await sendAndConfirmTransaction(connection, transaction, [
       ownerAccount
     ])
