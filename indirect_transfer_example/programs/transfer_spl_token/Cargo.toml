@@ -1,5 +1,5 @@
 [package]
-name = "transfer_spl_token"
+name = "indirect_transfer"
 version = "0.1.0"
 authors = ["Tung Nguyen"]
 license = "Apache-2.0"
@@ -13,5 +13,5 @@ cpi = ["no-entrypoint"]
 no-entrypoint = []
 
 [lib]
-name = "transfer_spl_token"
+name = "indirect_transfer"
 crate-type = ["cdylib", "lib"]

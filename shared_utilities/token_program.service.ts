@@ -16,6 +16,7 @@ export class TokenProgramService {
       return tokenMintAccount
     }
     const transaction = await TokenProgramInstructionService.createInitializeMintTransaction(
+      connection,
       payerAccount.publicKey,
       tokenMintAccount.publicKey,
       decimals,

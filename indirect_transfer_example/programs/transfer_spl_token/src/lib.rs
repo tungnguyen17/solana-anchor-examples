@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
 #[program]
-mod transfer_spl_token {
+mod indirect_transfer {
   use super::*;
 }

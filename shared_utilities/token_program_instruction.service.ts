@@ -1,6 +1,7 @@
-import { AccountMeta, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction, TransactionInstruction } from '@solana/web3.js'
+import { AccountMeta, Connection, PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY, Transaction, TransactionInstruction } from '@solana/web3.js'
 import * as BufferLayout from './buffer-layout'
 import { BufferLayoutService } from './buffer_layout.service'
+import { SolanaService } from './solana.service'
 
 export const ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID: PublicKey = new PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL')
 const ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_LAYOUT = {
@@ -73,6 +74,7 @@ export class TokenProgramInstructionService {
   }
 
   static async createInitializeAccountTransaction(
+    connection: Connection | null,
     payerAddress: PublicKey,
     ownerAddress: PublicKey,
     tokenMintAddress: PublicKey,
@@ -80,12 +82,16 @@ export class TokenProgramInstructionService {
     const transaction: Transaction = new Transaction()
     const tokenAccountAddress = await TokenProgramInstructionService.findAssociatedTokenAddress(ownerAddress, tokenMintAddress)
 
+    const space = 165
+    const costForSpace = connection == null
+      ? space * 10000
+      : await SolanaService.getMinimumBalanceForRentExemption(connection, space)
     transaction.add(
       SystemProgram.createAccount({
         fromPubkey: payerAddress,
         newAccountPubkey: tokenAccountAddress,
-        lamports: 10000000,
-        space: 165,
+        lamports: costForSpace,
+        space,
         programId: TOKEN_PROGRAM_ID,
       }),
     );
@@ -116,6 +122,7 @@ export class TokenProgramInstructionService {
   }
 
   static async createInitializeMintTransaction(
+    connection: Connection | null,
     payerAddress: PublicKey,
     tokenMintAddress: PublicKey,
     decimals: number,
@@ -123,12 +130,16 @@ export class TokenProgramInstructionService {
     freezeAuthorityAddress: PublicKey | null,
   ): Promise<Transaction> {
     const transaction = new Transaction()
+    const space = 82
+    const costForSpace = connection == null
+      ? space * 10000
+      : await SolanaService.getMinimumBalanceForRentExemption(connection, space)
     transaction.add(
       SystemProgram.createAccount({
         fromPubkey: payerAddress,
         newAccountPubkey: tokenMintAddress,
-        lamports: 10000000,
-        space: 82,
+        lamports: costForSpace,
+        space: space,
         programId: TOKEN_PROGRAM_ID,
       }),
     )
