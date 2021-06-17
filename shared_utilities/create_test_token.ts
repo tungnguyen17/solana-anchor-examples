@@ -1,29 +1,21 @@
-import { Connection, Keypair, sendAndConfirmTransaction } from '@solana/web3.js'
-import { FileSystemService } from './filesystem.service'
+import { Connection, Keypair } from '@solana/web3.js'
+import { SolanaConfigService } from './solana_config.service'
+import { TestAccountService } from './test_account.service'
 import { TokenProgramService } from './token_program.service'
-import { SolanaConfigService } from './solanaconfig.service'
-import path from 'path'
 
 (async function() {
   const defaultAccount = await SolanaConfigService.getDefaultAccount()
   const rpcUrl = await SolanaConfigService.getRpcUrl()
   const connection = new Connection(rpcUrl)
 
-  const accountPath = path.join(__dirname, '..', 'shared_accounts', 'token_account.json')
-  const isAccountExists = await FileSystemService.exists(accountPath)
-  const tokenMintAccount = isAccountExists
-    ? await SolanaConfigService.readAccountFromFile(accountPath)
-    : Keypair.generate()
-  if (!isAccountExists) {
-    SolanaConfigService.writeAccountToFile(accountPath, tokenMintAccount)
-  }
-
+  const tokenMintAccount = await TestAccountService.getTokenAccount(17)
+  const tokenMintAuthority = await TestAccountService.getAccount(17)
   await TokenProgramService.createTokenAccount(
     connection,
     defaultAccount,
     tokenMintAccount,
     6,
-    defaultAccount.publicKey,
+    tokenMintAuthority.publicKey,
     null,
   )
 
@@ -38,21 +30,21 @@ import path from 'path'
   await TokenProgramService.mint(
     connection,
     defaultAccount,
-    defaultAccount,
+    tokenMintAuthority,
     tokenMintAccount.publicKey,
     tokenAccountAddress,
     1000
   )
 
-  const newAccount = Keypair.generate()
+  const testAccount = await TestAccountService.getAccount(1)
   await TokenProgramService.createAssociatedTokenAccount(
     connection,
     defaultAccount,
-    newAccount.publicKey,
+    testAccount.publicKey,
     tokenMintAccount.publicKey
   )
 
-  const tokenAccountAddress2 = await TokenProgramService.findAssociatedTokenAddress(newAccount.publicKey, tokenMintAccount.publicKey)
+  const tokenAccountAddress2 = await TokenProgramService.findAssociatedTokenAddress(testAccount.publicKey, tokenMintAccount.publicKey)
   await TokenProgramService.trasnfer(
     connection,
     defaultAccount,

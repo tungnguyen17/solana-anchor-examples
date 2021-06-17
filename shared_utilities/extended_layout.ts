@@ -1,5 +1,5 @@
-import { Buffer } from 'buffer'
-import * as BufferLayout from './buffer-layout'
+import { Buffer } from 'buffer';
+import * as BufferLayout from './buffer-layout';
 
 /**
  * Layout for a public key
