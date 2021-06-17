@@ -1,5 +1,6 @@
 import { Connection } from '@solana/web3.js'
 import { SolanaConfigService } from './solana_config.service'
+import { SystemProgramService } from './system_program.service'
 import { TestAccountService } from './test_account.service'
 import { TokenProgramService } from './token_program.service'
 
@@ -36,20 +37,53 @@ import { TokenProgramService } from './token_program.service'
     1000
   )
 
-  const testAccount = await TestAccountService.getAccount(1)
+  const testAccount1 = await TestAccountService.getAccount(1)
+  await SystemProgramService.transfer(
+    connection,
+    defaultAccount,
+    defaultAccount,
+    testAccount1.publicKey,
+    500000
+  )
   await TokenProgramService.createAssociatedTokenAccount(
     connection,
     defaultAccount,
-    testAccount.publicKey,
+    testAccount1.publicKey,
     tokenMintAccount.publicKey
   )
 
-  const tokenAccountAddress2 = await TokenProgramService.findAssociatedTokenAddress(testAccount.publicKey, tokenMintAccount.publicKey)
-  await TokenProgramService.trasnfer(
+  const tokenAccountAddress1 = await TokenProgramService.findAssociatedTokenAddress(testAccount1.publicKey, tokenMintAccount.publicKey)
+  await TokenProgramService.transfer(
     connection,
     defaultAccount,
+    defaultAccount,
     tokenAccountAddress,
-    tokenAccountAddress2,
+    tokenAccountAddress1,
     500
+  )
+
+  const testAccount2 = await TestAccountService.getAccount(2)
+  await SystemProgramService.transfer(
+    connection,
+    defaultAccount,
+    testAccount1,
+    testAccount2.publicKey,
+    250000
+  )
+  await TokenProgramService.createAssociatedTokenAccount(
+    connection,
+    defaultAccount,
+    testAccount2.publicKey,
+    tokenMintAccount.publicKey
+  )
+
+  const tokenAccountAddress2 = await TokenProgramService.findAssociatedTokenAddress(testAccount2.publicKey, tokenMintAccount.publicKey)
+  await TokenProgramService.transfer(
+    connection,
+    defaultAccount,
+    testAccount1,
+    tokenAccountAddress1,
+    tokenAccountAddress2,
+    250
   )
 })()

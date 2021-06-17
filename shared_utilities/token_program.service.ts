@@ -12,7 +12,7 @@ export class TokenProgramService {
     freezeAuthorityAddress: PublicKey | null,
   ): Promise<Keypair> {
     if (await SolanaService.isAddressInUse(connection, tokenMintAccount.publicKey)) {
-      console.log(`SKIPPED: Token Account ${tokenMintAccount.publicKey.toBase58()} is already existed.`)
+      console.log(`SKIPPED: Token Account ${tokenMintAccount.publicKey.toBase58()} is already existed`)
       return tokenMintAccount
     }
     const transaction = await TokenProgramInstructionService.createInitializeMintTransaction(
@@ -39,7 +39,7 @@ export class TokenProgramService {
   ): Promise<PublicKey> {
     const tokenAccountAddress = await TokenProgramService.findAssociatedTokenAddress(ownerAddress, tokenMintAddress)
     if (await SolanaService.isAddressInUse(connection, tokenAccountAddress)) {
-      console.log(`SKIPPED: Associated Token Account ${tokenAccountAddress.toBase58()} of Account ${ownerAddress.toBase58()} is already existed.`)
+      console.log(`SKIPPED: Associated Token Account ${tokenAccountAddress.toBase58()} of Account ${ownerAddress.toBase58()} is already existed`)
       return tokenAccountAddress
     }
     const transaction = await TokenProgramInstructionService.createAssociatedTokenAccountTransaction(
@@ -75,12 +75,13 @@ export class TokenProgramService {
       signers.push(authorityAccount)
     }
     await sendAndConfirmTransaction(connection, transaction, signers)
-    console.log(`Minted ${amount} token units to ${recipientTokenAddress.toBase58()}.`)
+    console.log(`Minted ${amount} token units to ${recipientTokenAddress.toBase58()}`)
     return true
   }
 
-  static async trasnfer(
+  static async transfer(
     connection: Connection,
+    payerAccount: Keypair,
     ownerAccount: Keypair,
     ownerTokenAddress: PublicKey,
     recipientTokenAddress: PublicKey,
@@ -92,9 +93,13 @@ export class TokenProgramService {
       recipientTokenAddress,
       amount,
     )
-    await sendAndConfirmTransaction(connection, transaction, [
-      ownerAccount
-    ])
+    const signers = [
+      payerAccount
+    ]
+    if (payerAccount.publicKey != ownerAccount.publicKey) {
+      signers.push(ownerAccount)
+    }
+    await sendAndConfirmTransaction(connection, transaction, signers)
     console.log(`Transferred ${amount} token units from ${ownerTokenAddress.toBase58()} to ${recipientTokenAddress.toBase58()}`)
     return true
   }
