@@ -15,8 +15,8 @@ export class FileSystemService {
     return fs.exists(path)
   }
 
-  static async readFromFile(path: string) {
-    await fs.readFile(path, { encoding: 'utf8' })
+  static async readFromFile(path: string): Promise<string> {
+    return fs.readFile(path, { encoding: 'utf8' })
   }
 
   static async writeToFile(path: string, content: string) {
