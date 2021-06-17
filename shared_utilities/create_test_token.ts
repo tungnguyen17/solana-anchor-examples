@@ -18,61 +18,46 @@ import path from 'path'
     SolanaConfigService.writeAccountToFile(accountPath, tokenMintAccount)
   }
 
-  const createTokenMintTransaction = await TokenProgramService.createInitializeMintTransaction(
-    defaultAccount.publicKey,
-    tokenMintAccount.publicKey,
+  await TokenProgramService.createTokenAccount(
+    connection,
+    defaultAccount,
+    tokenMintAccount,
     6,
     defaultAccount.publicKey,
     null,
   )
-  await sendAndConfirmTransaction(connection, createTokenMintTransaction, [
-    defaultAccount,
-    tokenMintAccount
-  ])
-  console.log('created TokenMint')
 
-  const createTokenAccountTransaction = await TokenProgramService.createAssociatedTokenAccountTransaction(
-    defaultAccount.publicKey,
+  await TokenProgramService.createAssociatedTokenAccount(
+    connection,
+    defaultAccount,
     defaultAccount.publicKey,
     tokenMintAccount.publicKey
   )
-  await sendAndConfirmTransaction(connection, createTokenAccountTransaction, [
-    defaultAccount,
-  ])
-  console.log('created TokenAccount')
 
   const tokenAccountAddress = await TokenProgramService.findAssociatedTokenAddress(defaultAccount.publicKey, tokenMintAccount.publicKey)
-  const mintToTransaction = await TokenProgramService.createMintToTransaction(
-    defaultAccount.publicKey,
+  await TokenProgramService.mint(
+    connection,
+    defaultAccount,
+    defaultAccount,
     tokenMintAccount.publicKey,
     tokenAccountAddress,
     1000
   )
-  await sendAndConfirmTransaction(connection, mintToTransaction, [
-    defaultAccount,
-  ])
-  console.log('minted 1000 token units')
 
   const newAccount = Keypair.generate()
-  const createTokenAccountTransaction2 = await TokenProgramService.createAssociatedTokenAccountTransaction(
-    defaultAccount.publicKey,
+  await TokenProgramService.createAssociatedTokenAccount(
+    connection,
+    defaultAccount,
     newAccount.publicKey,
     tokenMintAccount.publicKey
   )
-  await sendAndConfirmTransaction(connection, createTokenAccountTransaction2, [
-    defaultAccount,
-  ])
-  console.log('created TokenAccount 2')
 
   const tokenAccountAddress2 = await TokenProgramService.findAssociatedTokenAddress(newAccount.publicKey, tokenMintAccount.publicKey)
-  const transferTransaction = await TokenProgramService.createTransferTransaction(
-    defaultAccount.publicKey,
+  await TokenProgramService.trasnfer(
+    connection,
+    defaultAccount,
     tokenAccountAddress,
     tokenAccountAddress2,
     500
   )
-  await sendAndConfirmTransaction(connection, transferTransaction, [
-    defaultAccount,
-  ])
-  console.log('transferred 500 token units')
 })()
