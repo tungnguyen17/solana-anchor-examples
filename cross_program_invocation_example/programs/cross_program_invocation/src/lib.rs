@@ -39,8 +39,7 @@ mod cross_program_invocation {
       data: data.clone(),
       accounts: vec![],
     };
-    let accounts = ctx.remaining_accounts;
-    solana_program::program::invoke(&instruction, &accounts);
+    solana_program::program::invoke(&instruction, &[recipient.clone()]);
     Ok(())
   }
 

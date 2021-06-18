@@ -16,39 +16,39 @@ const PROGRAM_KEYPAIR_FILE_PATH = path.join('target', 'deploy', 'cross_program_i
   const senderAccount = await TestAccountService.getAccount(17)
   const programAccount = await SolanaConfigService.readAccountFromFile(PROGRAM_KEYPAIR_FILE_PATH)
   const program = await AnchorService.loadProgram(PROGRAM_IDL_FILE_PATH, programAccount.publicKey)
-  //await direct(program, defaultAccount)
-  //await directSigned(program, defaultAccount)
+  await direct(program, defaultAccount)
+  await directSigned(program, defaultAccount)
   await raw(connection, program, defaultAccount, senderAccount)
   await indirect(program, defaultAccount, programAccount)
-  //await indirectSigned(program, defaultAccount, programAccount)
+  await indirectSigned(program, defaultAccount, programAccount)
 })()
 
 async function direct(
   program: Program,
   senderAccount: web3.Keypair,
 ) {
+  const data = program.coder.instruction.encode('direct', {})
+  console.log('Instruction', data.toJSON().data)
   const txSign = await program.rpc.direct({
     accounts: {
       sender: senderAccount.publicKey,
     }
   })
-  console.log('Direct invoked', txSign)
-  const data = program.coder.instruction.encode('direct', {})
-  console.log('Instruction', data.toJSON().data)
+  console.log('Direct invoked', '---', txSign, '\n')
 }
 
 async function directSigned(
   program: Program,
   senderAccount: web3.Keypair,
 ) {
+  const data = program.coder.instruction.encode('direct_signed', {})
+  console.log('Instruction', data.toJSON().data)
   const txSign = await program.rpc.directSigned({
     accounts: {
       sender: senderAccount.publicKey,
     }
   })
-  console.log('DirectSigned invoked', txSign)
-  const data = program.coder.instruction.encode('direct_signed', {})
-  console.log('Instruction', data.toJSON().data)
+  console.log('DirectSigned invoked', '---', txSign, '\n')
 }
 
 async function indirect(
@@ -57,8 +57,6 @@ async function indirect(
   programAccount: web3.Keypair,
   ) {
   const ixData = program.coder.instruction.encode('empty', {})
-  console.log(ixData)
-  console.log(ixData.toJSON().data)
   const requestAccounts : web3.AccountMeta[] = [
     <web3.AccountMeta> {
       pubkey: programAccount.publicKey,
@@ -66,6 +64,11 @@ async function indirect(
       isSigner: false
     },
   ]
+  const data = program.coder.instruction.encode('indirect', {
+    destination: programAccount.publicKey,
+    data: ixData,
+  })
+  console.log('Instruction', data.toJSON().data)
   const txSign = await program.rpc.indirect(programAccount.publicKey, ixData, {
     accounts: {
       sender: senderAccount.publicKey,
@@ -73,12 +76,7 @@ async function indirect(
     },
     remainingAccounts: requestAccounts,
   })
-  console.log('Indirect invoked', txSign)
-  const data = program.coder.instruction.encode('indirect', {
-    destination: programAccount.publicKey,
-    data: ixData,
-  })
-  console.log('Instruction', data.toJSON().data)
+  console.log('Indirect invoked', '---', txSign, '\n')
 }
 
 async function indirectSigned(
@@ -86,6 +84,8 @@ async function indirectSigned(
   senderAccount: web3.Keypair,
   programAccount: web3.Keypair,
 ) {
+  const data = program.coder.instruction.encode('indirect_signed', {})
+  console.log('Instruction', data.toJSON().data)
   const txSign = await program.rpc.indirectSigned({
     accounts: {
       sender: senderAccount.publicKey,
@@ -95,9 +95,7 @@ async function indirectSigned(
       senderAccount,
     ]
   })
-  console.log('IndirectSigned invoked', txSign)
-  const data = program.coder.instruction.encode('indirect_signed', {})
-  console.log('Instruction', data.toJSON().data)
+  console.log('IndirectSigned invoked', '---', txSign, '\n')
 }
 
 async function raw(
@@ -115,5 +113,5 @@ async function raw(
     ]
   }))
   const txSign = await web3.sendAndConfirmTransaction(connection, transaction, [payerAccount])
-  console.log('Raw invoked', txSign)
+  console.log('Raw invoked', '---', txSign, '\n')
 }

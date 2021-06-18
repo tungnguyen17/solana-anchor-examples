@@ -12,7 +12,7 @@ export class TokenProgramService {
     freezeAuthorityAddress: PublicKey | null,
   ): Promise<Keypair> {
     if (await SolanaService.isAddressInUse(connection, tokenMintAccount.publicKey)) {
-      console.log(`SKIPPED: Token Account ${tokenMintAccount.publicKey.toBase58()} is already existed`)
+      console.log(`SKIPPED: Token Account ${tokenMintAccount.publicKey.toBase58()} is already existed`, '\n')
       return tokenMintAccount
     }
     const transaction = await TokenProgramInstructionService.createInitializeMintTransaction(
@@ -27,7 +27,7 @@ export class TokenProgramService {
       payerAccount,
       tokenMintAccount,
     ])
-    console.log(`Created Token Account ${tokenMintAccount.publicKey.toBase58()}`, txSign)
+    console.log(`Created Token Account ${tokenMintAccount.publicKey.toBase58()}`, '---', txSign, '\n')
     return tokenMintAccount
   }
 
@@ -39,7 +39,7 @@ export class TokenProgramService {
   ): Promise<PublicKey> {
     const tokenAccountAddress = await TokenProgramService.findAssociatedTokenAddress(ownerAddress, tokenMintAddress)
     if (await SolanaService.isAddressInUse(connection, tokenAccountAddress)) {
-      console.log(`SKIPPED: Associated Token Account ${tokenAccountAddress.toBase58()} of Account ${ownerAddress.toBase58()} is already existed`)
+      console.log(`SKIPPED: Associated Token Account ${tokenAccountAddress.toBase58()} of Account ${ownerAddress.toBase58()} is already existed`, '\n')
       return tokenAccountAddress
     }
     const transaction = await TokenProgramInstructionService.createAssociatedTokenAccountTransaction(
@@ -50,7 +50,7 @@ export class TokenProgramService {
     const txSign = await sendAndConfirmTransaction(connection, transaction, [
       payerAccount,
     ])
-    console.log(`Created Associated Token Account ${tokenAccountAddress.toBase58()} for Account ${ownerAddress.toBase58()}`, txSign)
+    console.log(`Created Associated Token Account ${tokenAccountAddress.toBase58()} for Account ${ownerAddress.toBase58()}`, '---', txSign, '\n')
     return tokenAccountAddress
   }
 
@@ -75,7 +75,7 @@ export class TokenProgramService {
       signers.push(authorityAccount)
     }
     const txSign = await sendAndConfirmTransaction(connection, transaction, signers)
-    console.log(`Minted ${amount} token units to ${recipientTokenAddress.toBase58()}`, txSign)
+    console.log(`Minted ${amount} token units to ${recipientTokenAddress.toBase58()}`, '---', txSign, '\n')
     return true
   }
 
@@ -100,7 +100,7 @@ export class TokenProgramService {
       signers.push(ownerAccount)
     }
     const txSign = await sendAndConfirmTransaction(connection, transaction, signers)
-    console.log(`Transferred ${amount} token units from ${ownerTokenAddress.toBase58()} to ${recipientTokenAddress.toBase58()}`, txSign)
+    console.log(`Transferred ${amount} token units from ${ownerTokenAddress.toBase58()} to ${recipientTokenAddress.toBase58()}`, '---', txSign, '\n')
     return true
   }
 

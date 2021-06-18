@@ -16,13 +16,13 @@ export class SolanaService {
       data,
       BPF_LOADER_PROGRAM_ID,
     )
-    console.log(`Program loaded to ${programAccount.publicKey.toBase58()}`)
+    console.log(`Program loaded to ${programAccount.publicKey.toBase58()}`, '\n')
   }
 
   static async getAccountBalance(connection: Connection, address: PublicKey) {
     const lamports = await connection.getBalance(address)
     const sols = lamports / 1000000000
-    console.log(`Account ${address.toBase58()} have ${lamports} lamports (${sols} SOLs)`)
+    console.log(`Account ${address.toBase58()} have ${lamports} lamports (${sols} SOLs)`, '\n')
   }
 
   static async getMinimumBalanceForRentExemption(connection: Connection, space: number
@@ -32,7 +32,7 @@ export class SolanaService {
 
   static async getSigningAddress(seedAddress: PublicKey, programAddress: PublicKey): Promise<[PublicKey, number]> {
     const [address, nonce] = await PublicKey.findProgramAddress([seedAddress.toBuffer()], programAddress)
-    console.log('Signing address: ', address.toBase58(), nonce)
+    console.log(`Signing address for program ${programAddress.toBase58()}: `, address.toBase58(), nonce, '\n')
     return [address, nonce]
   }
 
@@ -55,11 +55,11 @@ export class SolanaService {
   ): Promise<boolean> {
     const programInf = await connection.getAccountInfo(address)
     if (programInf === null) {
-      console.log(`Program ${address.toBase58()} does not exist`)
+      console.log(`Program ${address.toBase58()} does not exist`, '\n')
       return false
     }
     else if (!programInf.executable) {
-      console.log(`Program ${address.toBase58()} is not executable`)
+      console.log(`Program ${address.toBase58()} is not executable`, '\n')
       return false
     }
     return true
