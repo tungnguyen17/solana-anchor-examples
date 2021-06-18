@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program;
 
 #[program]
 mod cross_program_invocation {
@@ -32,15 +33,14 @@ mod cross_program_invocation {
   ) -> ProgramResult {
     msg!("Instruction: Indirect");
     let sender = &ctx.accounts.sender;
-    let recipient = &ctx.accounts.sender;
-    let instruction = anchor_lang::solana_program::instruction::Instruction::new_with_bincode(
-      destinaton,
-      &data.clone(),
-      vec![
-        AccountMeta::new_readonly(sender.key.clone(), false),
-      ],
-    );
-    anchor_lang::solana_program::program::invoke(&instruction, &[sender.clone()]);
+    let recipient = &ctx.accounts.recipient;
+    let instruction = solana_program::instruction::Instruction {
+      program_id: destinaton,
+      data: data.clone(),
+      accounts: vec![],
+    };
+    let accounts = ctx.remaining_accounts;
+    solana_program::program::invoke(&instruction, &accounts);
     Ok(())
   }
 
