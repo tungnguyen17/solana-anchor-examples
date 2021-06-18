@@ -37,17 +37,38 @@ mod cross_program_invocation {
     let instruction = solana_program::instruction::Instruction {
       program_id: destinaton,
       data: data.clone(),
-      accounts: vec![],
+      accounts: vec![
+        solana_program::instruction::AccountMeta {
+          pubkey: *sender.key,
+          is_signer: false,
+          is_writable: false,
+        }
+      ],
     };
-    solana_program::program::invoke(&instruction, &[recipient.clone()]);
+    solana_program::program::invoke(&instruction, &[sender.clone(), recipient.clone()]);
     Ok(())
   }
 
   pub fn indirect_signed(
     ctx: Context<IndirectSignedContext>,
+    destinaton: Pubkey,
+    data: Vec<u8>,
   ) -> ProgramResult {
     msg!("Instruction: Indirect Signed");
     let sender = &ctx.accounts.sender;
+    let recipient = &ctx.accounts.recipient;
+    let instruction = solana_program::instruction::Instruction {
+      program_id: destinaton,
+      data: data.clone(),
+      accounts: vec![
+        solana_program::instruction::AccountMeta {
+          pubkey: *sender.key,
+          is_signer: true,
+          is_writable: false,
+        }
+      ],
+    };
+    solana_program::program::invoke(&instruction, &[sender.clone(), recipient.clone()]);
     Ok(())
   }
 }
@@ -77,4 +98,5 @@ pub struct IndirectContext<'info> {
 pub struct IndirectSignedContext<'info> {
   #[account(signer)]
   pub sender: AccountInfo<'info>,
+  pub recipient: AccountInfo<'info>,
 }

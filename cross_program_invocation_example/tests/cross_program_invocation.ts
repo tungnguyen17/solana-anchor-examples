@@ -56,14 +56,7 @@ async function indirect(
   senderAccount: web3.Keypair,
   programAccount: web3.Keypair,
   ) {
-  const ixData = program.coder.instruction.encode('empty', {})
-  const requestAccounts : web3.AccountMeta[] = [
-    <web3.AccountMeta> {
-      pubkey: programAccount.publicKey,
-      isWritable: false,
-      isSigner: false
-    },
-  ]
+  const ixData = program.coder.instruction.encode('direct', {})
   const data = program.coder.instruction.encode('indirect', {
     destination: programAccount.publicKey,
     data: ixData,
@@ -74,7 +67,6 @@ async function indirect(
       sender: senderAccount.publicKey,
       recipient: programAccount.publicKey,
     },
-    remainingAccounts: requestAccounts,
   })
   console.log('Indirect invoked', '---', txSign, '\n')
 }
@@ -84,12 +76,16 @@ async function indirectSigned(
   senderAccount: web3.Keypair,
   programAccount: web3.Keypair,
 ) {
-  const data = program.coder.instruction.encode('indirect_signed', {})
+  const ixData = program.coder.instruction.encode('direct_signed', {})
+  const data = program.coder.instruction.encode('indirect_signed', {
+    destination: programAccount.publicKey,
+    data: ixData,
+  })
   console.log('Instruction', data.toJSON().data)
-  const txSign = await program.rpc.indirectSigned({
+  const txSign = await program.rpc.indirectSigned(programAccount.publicKey, ixData, {
     accounts: {
       sender: senderAccount.publicKey,
-      programId: programAccount.publicKey,
+      recipient: programAccount.publicKey,
     },
     signers: [
       senderAccount,
