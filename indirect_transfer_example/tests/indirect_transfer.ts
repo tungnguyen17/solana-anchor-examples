@@ -1,8 +1,8 @@
 import { Program, Provider, setProvider, web3 } from '@project-serum/anchor';
-import { SolanaConfigService } from '../../shared_utilities/solana_config.service'
-import path from 'path'
-import { AnchorService } from '../../shared_utilities/anchor.service'
-import BN from 'bn.js'
+import BN from 'bn.js';
+import path from 'path';
+import { AnchorService } from '../../shared_utilities/anchor.service';
+import { SolanaConfigService } from '../../shared_utilities/solana_config.service';
 
 const PROGRAM_IDL_FILE_PATH = path.join('target', 'idl', 'indirect_transfer.json');
 const PROGRAM_KEYPAIR_FILE_PATH = path.join('target', 'deploy', 'indirect_transfer-keypair.json');

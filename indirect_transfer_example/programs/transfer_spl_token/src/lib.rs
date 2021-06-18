@@ -37,8 +37,7 @@ mod indirect_transfer {
     let recipient = &mut ctx.accounts.recipient;
     let system_program = &mut ctx.accounts.system_program;
     let instruction = &system_instruction::transfer(sender.key, recipient.key, amount);
-    let accounts = &[sender.clone(), recipient.clone(), system_program.clone()];
-    invoke_signed(&instruction, &accounts[0..3], &[&[&sender.key.to_bytes()], &[&recipient.key.to_bytes()]]);
+    invoke(&instruction, &[sender.clone(), recipient.clone(), system_program.clone()]);
     Ok(())
   }
 }

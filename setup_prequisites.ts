@@ -2,6 +2,7 @@ import path from 'path'
 import { FileSystemService } from './shared_utilities/file_system.service'
 
 const samples: string[] = [
+  'cross_program_invocation_example',
   'indirect_transfer_example'
 ];
 

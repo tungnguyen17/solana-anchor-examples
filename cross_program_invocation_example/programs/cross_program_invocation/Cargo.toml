@@ -1,0 +1,17 @@
+[package]
+name = "cross_program_invocation"
+version = "0.1.0"
+authors = ["Tung Nguyen"]
+license = "Apache-2.0"
+edition = "2018"
+
+[dependencies]
+anchor-lang = "0.7.0"
+
+[features]
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+
+[lib]
+name = "cross_program_invocation"
+crate-type = ["cdylib", "lib"]
