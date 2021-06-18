@@ -1,4 +1,4 @@
-import { Program, Provider, setProvider, web3 } from '@project-serum/anchor';
+import { web3 } from '@project-serum/anchor';
 import path from 'path';
 import { SolanaService } from '../../shared_utilities/solana.service';
 import { SolanaConfigService } from '../../shared_utilities/solana_config.service';
@@ -14,6 +14,6 @@ const PROGRAM_SO_FILE_PATH = path.join('target', 'deploy', 'cross_program_invoca
   const programAccount = await TestAccountService.getProgramAccount(1)
   await SolanaService.deploy(connection, defaultAccount, programAccount, PROGRAM_SO_FILE_PATH)
 
-  const anotherProgramAccount = await TestAccountService.getProgramAccount(100)
+  const anotherProgramAccount = await TestAccountService.getProgramAccount(101)
   await SolanaService.deploy(connection, defaultAccount, anotherProgramAccount, PROGRAM_SO_FILE_PATH)
 })()

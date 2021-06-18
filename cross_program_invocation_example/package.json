@@ -7,7 +7,7 @@
   "scripts": {
     "build": "anchor build",
     "clean": "rm -rf ./target",
-    "deploy": "node ./node_modules/ts-node/dist/bin -- ./migrations/deploy.ts",
+    "deploy": "solana program deploy ./target/deploy/cross_program_invocation.so",
     "publish": "npm run build && npm run deploy",
     "publish_clean": "npm run clean && npm run publish",
     "setup_prequisites": "node ./node_modules/ts-node/dist/bin -- ../shared_utilities/create_test_token.ts",

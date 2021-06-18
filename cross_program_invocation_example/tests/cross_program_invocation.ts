@@ -2,9 +2,9 @@ import { Program, Provider, setProvider, web3 } from '@project-serum/anchor';
 import path from 'path';
 import { AnchorService } from '../../shared_utilities/anchor.service';
 import { SolanaConfigService } from '../../shared_utilities/solana_config.service';
-import { TestAccountService } from '../../shared_utilities/test_account.service';
 
 const PROGRAM_IDL_FILE_PATH = path.join('target', 'idl', 'cross_program_invocation.json');
+const PROGRAM_KEYPAIR_FILE_PATH = path.join('target', 'deploy', 'cross_program_invocation-keypair.json');
 
 (async function() {
   const rpcUrl = await SolanaConfigService.getRpcUrl()
@@ -12,14 +12,13 @@ const PROGRAM_IDL_FILE_PATH = path.join('target', 'idl', 'cross_program_invocati
   setProvider(Provider.local(rpcUrl))
 
   const defaultAccount = await SolanaConfigService.getDefaultAccount()
-  const programAccount = await TestAccountService.getProgramAccount(1)
-  const anotherProgramAccount = await TestAccountService.getProgramAccount(101)
+  const programAccount = await SolanaConfigService.readAccountFromFile(PROGRAM_KEYPAIR_FILE_PATH)
   const program = await AnchorService.loadProgram(PROGRAM_IDL_FILE_PATH, programAccount.publicKey)
-  await direct(program, defaultAccount)
-  await directSigned(program, defaultAccount)
-  await indirect(program, defaultAccount, anotherProgramAccount)
-  await indirectSigned(program, defaultAccount, anotherProgramAccount)
-  await raw(connection, program, defaultAccount)
+  //await direct(program, defaultAccount)
+  //await directSigned(program, defaultAccount)
+  //await raw(connection, program, defaultAccount)
+  await indirect(program, defaultAccount, programAccount)
+  //await indirectSigned(program, defaultAccount, programAccount)
 })()
 
 async function direct(
@@ -55,14 +54,18 @@ async function indirect(
   senderAccount: web3.Keypair,
   programAccount: web3.Keypair,
   ) {
-  const txSign = await program.rpc.indirect({
+  const ixData = program.coder.instruction.encode('empty', {})
+  const txSign = await program.rpc.indirect(programAccount.publicKey, ixData,{
     accounts: {
       sender: senderAccount.publicKey,
-      programId: programAccount.publicKey,
+      recipient: programAccount.publicKey,
     },
   })
   console.log('Indirect invoked', txSign)
-  const data = program.coder.instruction.encode('indirect', {})
+  const data = program.coder.instruction.encode('indirect', {
+    destination: programAccount.publicKey,
+    data: Buffer.from([194,  97, 216,  87, 114, 193, 179, 121]),
+  })
   console.log('Instruction', data.toJSON().data)
 }
 

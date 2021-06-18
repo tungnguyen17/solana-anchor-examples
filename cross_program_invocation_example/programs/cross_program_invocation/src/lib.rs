@@ -4,6 +4,13 @@ use anchor_lang::prelude::*;
 mod cross_program_invocation {
   use super::*;
 
+  pub fn empty(
+    _ctx: Context<EmptyContext>,
+  ) -> ProgramResult {
+    msg!("Instruction: Empty");
+    Ok(())
+  }
+
   pub fn direct(
     ctx: Context<DirectContext>,
   ) -> ProgramResult {
@@ -20,13 +27,15 @@ mod cross_program_invocation {
 
   pub fn indirect(
     ctx: Context<IndirectContext>,
+    destinaton: Pubkey,
+    data: Vec<u8>,
   ) -> ProgramResult {
     msg!("Instruction: Indirect");
     let sender = &ctx.accounts.sender;
-    let program_id = &ctx.accounts.program_id;
+    let recipient = &ctx.accounts.sender;
     let instruction = anchor_lang::solana_program::instruction::Instruction::new_with_bincode(
-      *program_id.key,
-      &[194,  97, 216,  87, 114, 193, 179, 121],
+      destinaton,
+      &data.clone(),
       vec![
         AccountMeta::new_readonly(sender.key.clone(), false),
       ],
@@ -40,9 +49,12 @@ mod cross_program_invocation {
   ) -> ProgramResult {
     msg!("Instruction: Indirect Signed");
     let sender = &ctx.accounts.sender;
-    let program_id = &ctx.accounts.program_id;
     Ok(())
   }
+}
+
+#[derive(Accounts)]
+pub struct EmptyContext {
 }
 
 #[derive(Accounts)]
@@ -59,12 +71,11 @@ pub struct DirectSignedContext<'info> {
 #[derive(Accounts)]
 pub struct IndirectContext<'info> {
   pub sender: AccountInfo<'info>,
-  pub program_id: AccountInfo<'info>,
+  pub recipient: AccountInfo<'info>,
 }
 
 #[derive(Accounts)]
 pub struct IndirectSignedContext<'info> {
   #[account(signer)]
   pub sender: AccountInfo<'info>,
-  pub program_id: AccountInfo<'info>,
 }
