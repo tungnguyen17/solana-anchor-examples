@@ -23,11 +23,11 @@ export class TokenProgramService {
       mintAuthorityAddress,
       freezeAuthorityAddress,
     )
-    await sendAndConfirmTransaction(connection, transaction, [
+    const txSign = await sendAndConfirmTransaction(connection, transaction, [
       payerAccount,
       tokenMintAccount,
     ])
-    console.log(`Created Token Account ${tokenMintAccount.publicKey.toBase58()}`)
+    console.log(`Created Token Account ${tokenMintAccount.publicKey.toBase58()}`, txSign)
     return tokenMintAccount
   }
 
@@ -47,10 +47,10 @@ export class TokenProgramService {
       ownerAddress,
       tokenMintAddress,
     )
-    await sendAndConfirmTransaction(connection, transaction, [
+    const txSign = await sendAndConfirmTransaction(connection, transaction, [
       payerAccount,
     ])
-    console.log(`Created Associated Token Account ${tokenAccountAddress.toBase58()} for Account ${ownerAddress.toBase58()}`)
+    console.log(`Created Associated Token Account ${tokenAccountAddress.toBase58()} for Account ${ownerAddress.toBase58()}`, txSign)
     return tokenAccountAddress
   }
 
@@ -74,8 +74,8 @@ export class TokenProgramService {
     if (payerAccount.publicKey != authorityAccount.publicKey) {
       signers.push(authorityAccount)
     }
-    await sendAndConfirmTransaction(connection, transaction, signers)
-    console.log(`Minted ${amount} token units to ${recipientTokenAddress.toBase58()}`)
+    const txSign = await sendAndConfirmTransaction(connection, transaction, signers)
+    console.log(`Minted ${amount} token units to ${recipientTokenAddress.toBase58()}`, txSign)
     return true
   }
 
@@ -99,8 +99,8 @@ export class TokenProgramService {
     if (payerAccount.publicKey != ownerAccount.publicKey) {
       signers.push(ownerAccount)
     }
-    await sendAndConfirmTransaction(connection, transaction, signers)
-    console.log(`Transferred ${amount} token units from ${ownerTokenAddress.toBase58()} to ${recipientTokenAddress.toBase58()}`)
+    const txSign = await sendAndConfirmTransaction(connection, transaction, signers)
+    console.log(`Transferred ${amount} token units from ${ownerTokenAddress.toBase58()} to ${recipientTokenAddress.toBase58()}`, txSign)
     return true
   }
 

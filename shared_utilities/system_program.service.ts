@@ -20,8 +20,8 @@ export class SystemProgramService {
     if (payerAccount.publicKey != senderAccount.publicKey) {
       signers.push(senderAccount)
     }
-    await sendAndConfirmTransaction(connection, transaction, signers)
-    console.log(`Transferred ${amount} lamports from ${senderAccount.publicKey.toBase58()} to ${recipientAddress.toBase58()}`)
+    const txSign = await sendAndConfirmTransaction(connection, transaction, signers)
+    console.log(`Transferred ${amount} lamports from ${senderAccount.publicKey.toBase58()} to ${recipientAddress.toBase58()}`, txSign)
     return true
   }
 }
