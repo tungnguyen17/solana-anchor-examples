@@ -15,11 +15,19 @@ export class FileSystemService {
     return fs.exists(path)
   }
 
-  static async readFromFile(path: string): Promise<string> {
+  static async readFromFile(path: string): Promise<Buffer> {
+    return fs.readFile(path)
+  }
+
+  static async readTextFromFile(path: string): Promise<string> {
     return fs.readFile(path, { encoding: 'utf8' })
   }
 
-  static async writeToFile(path: string, content: string) {
+  static async writeToFile(path: string, content: Buffer) {
+    await fs.writeFile(path, content)
+  }
+
+  static async writeTextToFile(path: string, content: string) {
     await fs.writeFile(path, content, { encoding: 'utf8' })
   }
 }

@@ -1,42 +1,70 @@
-use anchor_lang::prelude::{
-  AccountDeserialize,
-  AccountInfo,
-  AccountMeta,
-  AccountSerialize,
-  Accounts,
-  AccountsExit,
-  AnchorDeserialize,
-  AnchorSerialize,
-  borsh,
-  Context,
-  msg,
-  program,
-  ProgramError,
-  ProgramResult,
-  Pubkey,
-  ToAccountInfo,
-};
-use anchor_lang::solana_program::{
-  system_instruction,
-};
-use anchor_lang::solana_program::program::{
-  invoke,
-  invoke_signed,
-};
+use anchor_lang::prelude::*;
 
 #[program]
 mod cross_program_invocation {
   use super::*;
 
-  pub fn primary(
-    ctx: Context<PrimaryContext>,
-    amount: u64,
+  pub fn direct(
+    ctx: Context<DirectContext>,
   ) -> ProgramResult {
-    msg!("Instruction: Primary");
+    msg!("Instruction: Direct");
+    Ok(())
+  }
+
+  pub fn direct_signed(
+    ctx: Context<DirectSignedContext>,
+  ) -> ProgramResult {
+    msg!("Instruction: Direct Signed");
+    Ok(())
+  }
+
+  pub fn indirect(
+    ctx: Context<IndirectContext>,
+  ) -> ProgramResult {
+    msg!("Instruction: Indirect");
+    let sender = &ctx.accounts.sender;
+    let program_id = &ctx.accounts.program_id;
+    let instruction = anchor_lang::solana_program::instruction::Instruction::new_with_bincode(
+      *program_id.key,
+      &[194,  97, 216,  87, 114, 193, 179, 121],
+      vec![
+        AccountMeta::new_readonly(sender.key.clone(), false),
+      ],
+    );
+    anchor_lang::solana_program::program::invoke(&instruction, &[sender.clone()]);
+    Ok(())
+  }
+
+  pub fn indirect_signed(
+    ctx: Context<IndirectSignedContext>,
+  ) -> ProgramResult {
+    msg!("Instruction: Indirect Signed");
+    let sender = &ctx.accounts.sender;
+    let program_id = &ctx.accounts.program_id;
     Ok(())
   }
 }
 
 #[derive(Accounts)]
-pub struct PrimaryConext<'info> {
+pub struct DirectContext<'info> {
+  pub sender: AccountInfo<'info>,
+}
+
+#[derive(Accounts)]
+pub struct DirectSignedContext<'info> {
+  #[account(signer)]
+  pub sender: AccountInfo<'info>,
+}
+
+#[derive(Accounts)]
+pub struct IndirectContext<'info> {
+  pub sender: AccountInfo<'info>,
+  pub program_id: AccountInfo<'info>,
+}
+
+#[derive(Accounts)]
+pub struct IndirectSignedContext<'info> {
+  #[account(signer)]
+  pub sender: AccountInfo<'info>,
+  pub program_id: AccountInfo<'info>,
 }

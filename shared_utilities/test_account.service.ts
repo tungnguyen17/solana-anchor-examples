@@ -9,6 +9,11 @@ export class TestAccountService {
     return getExistAccountOrCreateNew(`test_account_${num}.json`)
   }
 
+  static async getProgramAccount(num: number
+  ): Promise<Keypair> {
+    return getExistAccountOrCreateNew(`program_account_${num}.json`)
+  }
+
   static async getTokenAccount(num: number
   ): Promise<Keypair> {
     return getExistAccountOrCreateNew(`token_account_${num}.json`)

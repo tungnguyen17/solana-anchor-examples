@@ -1,6 +1,24 @@
-import { Connection, Keypair, PublicKey } from '@solana/web3.js'
+import { BpfLoader, BPF_LOADER_PROGRAM_ID, Connection, Keypair, PublicKey } from '@solana/web3.js'
+import { FileSystemService } from './file_system.service';
 
 export class SolanaService {
+  static async deploy(
+    connection: Connection,
+    payerAccount: Keypair,
+    programAccount: Keypair,
+    compiledFilePath: string,
+  ) {
+    const data = await FileSystemService.readFromFile(compiledFilePath)
+    await BpfLoader.load(
+      connection,
+      payerAccount,
+      programAccount,
+      data,
+      BPF_LOADER_PROGRAM_ID,
+    )
+    console.log(`Program loaded to ${programAccount.publicKey.toBase58()}`)
+  }
+
   static async getAccountBalance(connection: Connection, address: PublicKey) {
     const lamports = await connection.getBalance(address)
     const sols = lamports / 1000000000
