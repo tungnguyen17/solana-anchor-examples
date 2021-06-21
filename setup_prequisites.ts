@@ -3,7 +3,8 @@ import { FileSystemService } from './shared_utilities/file_system.service'
 
 const samples: string[] = [
   'cross_program_invocation_example',
-  'indirect_transfer_example'
+  'indirect_transfer_example',
+  'program_derived_address_example',
 ];
 
 (async function () {

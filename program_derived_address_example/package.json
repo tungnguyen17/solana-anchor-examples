@@ -1,0 +1,18 @@
+{
+  "name": "program_derived_address_example",
+  "version": "1.0.0",
+  "description": "Experiment with program derived account",
+  "author": "Tung Nguyen",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "anchor build",
+    "clean": "rm -rf ./target",
+    "deploy": "solana program deploy ./target/deploy/program_derived_address.so",
+    "publish": "npm run build && npm run deploy",
+    "publish_clean": "npm run clean && npm run publish",
+    "setup_prequisites": "node ./node_modules/ts-node/dist/bin -- ../shared_utilities/create_test_token.ts",
+    "test": "node ./node_modules/ts-node/dist/bin -- ./tests/program_derived_address.ts",
+    "verify": "npm run publish && npm run test",
+    "verify_clean": "npm run publish_clean && npm run test"
+  }
+}

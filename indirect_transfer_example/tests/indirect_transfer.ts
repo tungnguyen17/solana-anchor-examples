@@ -5,7 +5,7 @@ import { AnchorService } from '../../shared_utilities/anchor.service';
 import { SolanaConfigService } from '../../shared_utilities/solana_config.service';
 import { TestAccountService } from '../../shared_utilities/test_account.service';
 import { TokenProgramService } from '../../shared_utilities/token_program.service';
-import { TOKEN_PROGRAM_ID, TokenProgramInstructionService } from '../../shared_utilities/token_program_instruction.service';
+import { TokenProgramInstructionService, TOKEN_PROGRAM_ID } from '../../shared_utilities/token_program_instruction.service';
 
 const PROGRAM_IDL_FILE_PATH = path.join('target', 'idl', 'indirect_transfer.json');
 const PROGRAM_KEYPAIR_FILE_PATH = path.join('target', 'deploy', 'indirect_transfer-keypair.json');
