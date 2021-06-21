@@ -16,17 +16,31 @@ mod indirect_transfer {
     let system_program = &ctx.accounts.system_program;
     let instruction = &solana_program::system_instruction::transfer(sender.key, recipient.key, amount);
     msg!("DEBUG: Transfer Instruction {:?}", instruction);
-    msg!("DEBUG: Sender {:?}", &sender);
-    msg!("DEBUG: Recipient {:?}", &recipient);
     solana_program::program::invoke(&instruction, &[payer.clone(), sender.clone(), recipient.clone()]);
     Ok(())
   }
 
   pub fn transfer_token(
     ctx: Context<TransferTokenContext>,
-    amount: u64,
+    amount: Vec<u8>,
   ) -> ProgramResult {
     msg!("Instruction: Transfer Token");
+    let token_program = &ctx.accounts.token_program;
+    let payer = &ctx.accounts.payer;
+    let sender = &ctx.accounts.sender;
+    let sender_token = &ctx.accounts.sender_token;
+    let recipient_token = &ctx.accounts.recipient_token;
+    let instruction = solana_program::instruction::Instruction {
+      program_id: *token_program.key,
+      accounts: vec![
+        solana_program::instruction::AccountMeta::new(*sender_token.key, false),
+        solana_program::instruction::AccountMeta::new(*recipient_token.key, false),
+        solana_program::instruction::AccountMeta::new_readonly(*sender.key, true),
+      ],
+      data: amount.clone(),
+    };
+    msg!("DEBUG: TransferToken Instruction {:?}", instruction);
+    solana_program::program::invoke(&instruction, &[payer.clone(), sender.clone(), sender_token.clone(), recipient_token.clone()]);
     Ok(())
   }
 }
@@ -45,9 +59,12 @@ pub struct TransferSolContext<'info> {
 #[derive(Accounts)]
 pub struct TransferTokenContext<'info> {
   #[account(signer)]
+  pub payer: AccountInfo<'info>,
+  #[account(signer)]
   pub sender: AccountInfo<'info>,
-  pub token_mint: AccountInfo<'info>,
+  #[account(mut)]
   pub sender_token: AccountInfo<'info>,
+  #[account(mut)]
   pub recipient_token: AccountInfo<'info>,
   pub token_program: AccountInfo<'info>,
 }
