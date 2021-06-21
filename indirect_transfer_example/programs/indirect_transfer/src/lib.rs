@@ -10,11 +10,15 @@ mod indirect_transfer {
     amount: u64,
   ) -> ProgramResult {
     msg!("Instruction: Transfer SOL");
+    let payer = &ctx.accounts.payer;
     let sender = &ctx.accounts.sender;
     let recipient = &ctx.accounts.recipient;
     let system_program = &ctx.accounts.system_program;
     let instruction = &solana_program::system_instruction::transfer(sender.key, recipient.key, amount);
-    solana_program::program::invoke(&instruction, &[sender.clone(), recipient.clone()]);
+    msg!("DEBUG: Transfer Instruction {:?}", instruction);
+    msg!("DEBUG: Sender {:?}", &sender);
+    msg!("DEBUG: Recipient {:?}", &recipient);
+    solana_program::program::invoke(&instruction, &[payer.clone(), sender.clone(), recipient.clone()]);
     Ok(())
   }
 
@@ -29,6 +33,8 @@ mod indirect_transfer {
 
 #[derive(Accounts)]
 pub struct TransferSolContext<'info> {
+  #[account(signer)]
+  pub payer: AccountInfo<'info>,
   #[account(signer)]
   pub sender: AccountInfo<'info>,
   #[account(mut)]
