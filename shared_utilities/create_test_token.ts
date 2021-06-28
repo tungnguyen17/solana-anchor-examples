@@ -24,7 +24,7 @@ import { TokenProgramService } from './token_program.service'
     connection,
     defaultAccount,
     defaultAccount.publicKey,
-    tokenMintAccount.publicKey
+    tokenMintAccount.publicKey,
   )
 
   const tokenAccountAddress = await TokenProgramService.findAssociatedTokenAddress(defaultAccount.publicKey, tokenMintAccount.publicKey)
@@ -34,7 +34,7 @@ import { TokenProgramService } from './token_program.service'
     tokenMintAuthority,
     tokenMintAccount.publicKey,
     tokenAccountAddress,
-    1000
+    1000,
   )
 
   const testAccount1 = await TestAccountService.getAccount(1)
@@ -43,13 +43,13 @@ import { TokenProgramService } from './token_program.service'
     defaultAccount,
     defaultAccount,
     testAccount1.publicKey,
-    500000
+    500000,
   )
   await TokenProgramService.createAssociatedTokenAccount(
     connection,
     defaultAccount,
     testAccount1.publicKey,
-    tokenMintAccount.publicKey
+    tokenMintAccount.publicKey,
   )
 
   const tokenAccountAddress1 = await TokenProgramService.findAssociatedTokenAddress(testAccount1.publicKey, tokenMintAccount.publicKey)
@@ -59,7 +59,7 @@ import { TokenProgramService } from './token_program.service'
     defaultAccount,
     tokenAccountAddress,
     tokenAccountAddress1,
-    500
+    500,
   )
 
   const testAccount2 = await TestAccountService.getAccount(2)
@@ -68,13 +68,13 @@ import { TokenProgramService } from './token_program.service'
     defaultAccount,
     testAccount1,
     testAccount2.publicKey,
-    250000
+    250000,
   )
   await TokenProgramService.createAssociatedTokenAccount(
     connection,
     defaultAccount,
     testAccount2.publicKey,
-    tokenMintAccount.publicKey
+    tokenMintAccount.publicKey,
   )
 
   const tokenAccountAddress2 = await TokenProgramService.findAssociatedTokenAddress(testAccount2.publicKey, tokenMintAccount.publicKey)
@@ -84,6 +84,6 @@ import { TokenProgramService } from './token_program.service'
     testAccount1,
     tokenAccountAddress1,
     tokenAccountAddress2,
-    250
+    250,
   )
 })()

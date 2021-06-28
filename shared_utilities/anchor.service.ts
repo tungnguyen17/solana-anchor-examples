@@ -6,7 +6,7 @@ export class AnchorService {
   static async loadProgram(idlFilePath: string, address: web3.PublicKey): Promise<Program> {
     const idlJson = await FileSystemService.readTextFromFile(idlFilePath);
     const idl = JSON.parse(idlJson)
-    console.log(`Program account: ${address.toBase58()}`)
+    console.log(`Program account: ${address.toBase58()}`, '\n')
     return new Program(idl, address)
   }
 }
