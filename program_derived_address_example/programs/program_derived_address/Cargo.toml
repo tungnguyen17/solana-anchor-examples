@@ -1,16 +1,19 @@
 [package]
-name = "program_derived_address"
+name = "program-derived-address"
 version = "0.1.0"
 authors = ["Tung Nguyen"]
 license = "Apache-2.0"
 edition = "2018"
 
 [dependencies]
-anchor-lang = "0.7.0"
+anchor-lang = "0.9.0"
+solana-program = "1.7.1"
 
 [features]
 cpi = ["no-entrypoint"]
+default = []
 no-entrypoint = []
+no-idl = []
 
 [lib]
 name = "program_derived_address"
