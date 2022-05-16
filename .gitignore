@@ -5,9 +5,8 @@
 /Cargo.lock
 /package-lock.json
 
-/shared_accounts/*.json
-
 # Example specific folder
+/*/Cargo.lock
 /*/node_modules
-/*/target
 /*/package-lock.json
+/*/target
