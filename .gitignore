@@ -1,7 +1,6 @@
 # Root folder
 /dist
 /node_modules
-
 /Cargo.lock
 /package-lock.json
 

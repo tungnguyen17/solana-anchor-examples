@@ -1,14 +1,17 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program;
 
+declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+
 #[program]
 mod program_derived_address {
   use super::*;
 
   pub fn empty(
     _ctx: Context<EmptyContext>,
-  ) -> ProgramResult {
+  ) -> Result<()> {
     msg!("Instruction: Empty");
+
     Ok(())
   }
 
@@ -18,8 +21,9 @@ mod program_derived_address {
     data: Vec<u8>,
     seed: Vec<u8>,
     nonce: u8,
-  ) -> ProgramResult {
+  ) -> Result<()> {
     msg!("Instruction: Forward");
+
     let destination = &ctx.accounts.destination;
     let instruction = solana_program::instruction::Instruction {
       program_id: *destination.key,
@@ -28,7 +32,9 @@ mod program_derived_address {
     };
     let remaining_accounts = ctx.remaining_accounts;
     let seeds: &[&[_]] = &[&seed.clone(), &[nonce]];
-    solana_program::program::invoke_signed(&instruction, &remaining_accounts, &[&seeds]);
+    solana_program::program::invoke_signed(&instruction, &remaining_accounts, &[&seeds])
+      .expect("Cross Program Invocation failed");
+
     Ok(())
   }
 }
@@ -39,6 +45,7 @@ pub struct EmptyContext {
 
 #[derive(Accounts)]
 pub struct ForwardContext<'info> {
+  /// CHECK: target program to forward the instruction to
   pub destination: AccountInfo<'info>,
 }
 
