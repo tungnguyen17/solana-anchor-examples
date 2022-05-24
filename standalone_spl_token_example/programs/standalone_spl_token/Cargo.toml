@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Tung Nguyen"]
 license = "Apache-2.0"
 edition = "2018"
+workspace = "../../.."
 
 [dependencies]
 anchor-lang = "0.24.2"

@@ -1,11 +1,12 @@
 # Root folder
 /dist
 /node_modules
+/target
 /Cargo.lock
 /package-lock.json
 
 # Example specific folder
-/*/Cargo.lock
 /*/node_modules
-/*/package-lock.json
 /*/target
+/*/Cargo.lock
+/*/package-lock.json
