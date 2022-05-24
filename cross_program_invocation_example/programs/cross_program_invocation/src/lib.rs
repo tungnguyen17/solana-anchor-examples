@@ -1,28 +1,33 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program;
 
+declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+
 #[program]
 mod cross_program_invocation {
   use super::*;
 
   pub fn empty(
     _ctx: Context<EmptyContext>,
-  ) -> ProgramResult {
+  ) -> Result<()> {
     msg!("Instruction: Empty");
+
     Ok(())
   }
 
   pub fn direct(
-    ctx: Context<DirectContext>,
-  ) -> ProgramResult {
+    _ctx: Context<DirectContext>,
+  ) -> Result<()> {
     msg!("Instruction: Direct");
+
     Ok(())
   }
 
   pub fn direct_signed(
-    ctx: Context<DirectSignedContext>,
-  ) -> ProgramResult {
+    _ctx: Context<DirectSignedContext>,
+  ) -> Result<()> {
     msg!("Instruction: Direct Signed");
+
     Ok(())
   }
 
@@ -30,8 +35,9 @@ mod cross_program_invocation {
     ctx: Context<IndirectContext>,
     destinaton: Pubkey,
     data: Vec<u8>,
-  ) -> ProgramResult {
+  ) -> Result<()> {
     msg!("Instruction: Indirect");
+
     let sender = &ctx.accounts.sender;
     let recipient = &ctx.accounts.recipient;
     let instruction = solana_program::instruction::Instruction {
@@ -45,7 +51,9 @@ mod cross_program_invocation {
         }
       ],
     };
-    solana_program::program::invoke(&instruction, &[sender.clone(), recipient.clone()]);
+    solana_program::program::invoke(&instruction, &[sender.clone(), recipient.clone()])
+      .expect("CPI failed");
+
     Ok(())
   }
 
@@ -53,8 +61,9 @@ mod cross_program_invocation {
     ctx: Context<IndirectSignedContext>,
     destinaton: Pubkey,
     data: Vec<u8>,
-  ) -> ProgramResult {
+  ) -> Result<()> {
     msg!("Instruction: Indirect Signed");
+
     let sender = &ctx.accounts.sender;
     let recipient = &ctx.accounts.recipient;
     let instruction = solana_program::instruction::Instruction {
@@ -68,7 +77,9 @@ mod cross_program_invocation {
         }
       ],
     };
-    solana_program::program::invoke(&instruction, &[sender.clone(), recipient.clone()]);
+    solana_program::program::invoke(&instruction, &[sender.clone(), recipient.clone()])
+      .expect("CPI failed");
+
     Ok(())
   }
 }
@@ -79,24 +90,36 @@ pub struct EmptyContext {
 
 #[derive(Accounts)]
 pub struct DirectContext<'info> {
+
+  /// CHECK: Any account
   pub sender: AccountInfo<'info>,
 }
 
 #[derive(Accounts)]
 pub struct DirectSignedContext<'info> {
+
+  /// CHECK: Any account
   #[account(signer)]
   pub sender: AccountInfo<'info>,
 }
 
 #[derive(Accounts)]
 pub struct IndirectContext<'info> {
+
+  /// CHECK: Account to forward in CPI call
   pub sender: AccountInfo<'info>,
+
+  /// CHECK: Account to forward in CPI call
   pub recipient: AccountInfo<'info>,
 }
 
 #[derive(Accounts)]
 pub struct IndirectSignedContext<'info> {
+
+  /// CHECK: Signer to forward in CPI call
   #[account(signer)]
   pub sender: AccountInfo<'info>,
+
+  /// CHECK: Account to forward in CPI call
   pub recipient: AccountInfo<'info>,
 }
