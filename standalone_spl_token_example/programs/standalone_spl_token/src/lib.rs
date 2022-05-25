@@ -3,16 +3,16 @@ use anchor_lang::prelude::*;
 pub mod anchor_spl;
 pub mod spl_token;
 
-declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
+declare_id!("AyBqnrH1y4U9Cqrupj3pKFYoAtoXb5RxUfoDFPUuKDrs");
 
 #[program]
-mod program_derived_address {
+mod standalone_spl_token {
   use super::*;
 
   pub fn readme(
     ctx: Context<ReadmeContext>,
   ) -> Result<()> {
-    msg!("Instruction: Readme");
+    msg!("StandaloneSplToken: Readme");
 
     let mint = &ctx.accounts.mint;
     let token = &ctx.accounts.token;
@@ -41,6 +41,7 @@ pub struct ReadmeContext<'info> {
 
 #[error_code]
 pub enum ErrorCode {
+
   #[msg("Invalid Account.")]
   InvalidAccount,
 }
