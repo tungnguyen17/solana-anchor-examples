@@ -1,9 +1,7 @@
-import { Connection, Keypair, PublicKey } from '@solana/web3.js';
-import { SolanaConfigService } from '../../shared_utilities/solana/solana_config.service'
-import { TokenProgramService } from '../../shared_utilities/solana/token_program.service'
-import { TestAccountService } from '../../shared_utilities/solana/test_account.service'
-import assert from 'assert';
-import { StandaloneTokenService } from '../client/standalone_spl_token.service';
+import { SolanaConfigService, TestAccountService, TokenProgramService } from '@tforcexyz/solana-support-library'
+import { Connection, Keypair, PublicKey } from '@solana/web3.js'
+import assert from 'assert'
+import { StandaloneTokenService } from '../client/standalone_spl_token.service'
 
 describe('standalone_spl_token_test', function() {
 
@@ -16,7 +14,7 @@ describe('standalone_spl_token_test', function() {
 
   before(async function() {
     defaultAccount = await SolanaConfigService.getDefaultAccount()
-    tokenMint1Account = await TestAccountService.getTokenAccount(1)
+    tokenMint1Account = await TestAccountService.getTokenAccount(100)
 
     await TokenProgramService.createTokenMint(
       connection,
