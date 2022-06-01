@@ -1,6 +1,7 @@
-import { SolanaConfigService, TestAccountService, TokenProgramService } from '@tforcexyz/solana-support-library'
 import { Connection, Keypair, PublicKey } from '@solana/web3.js'
-import assert from 'assert'
+import { TokenProgramService } from '@tforcexyz/solana-support-library'
+import { SolanaConfigService, TestAccountService } from '@tforcexyz/solana-support-library/config'
+import { assert } from 'chai'
 import { StandaloneTokenService } from '../client/standalone_spl_token.service'
 
 describe('standalone_spl_token_test', function() {
