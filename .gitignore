@@ -1,13 +1,10 @@
-# Root folder
-/dist
+/.DS_Store
+/.npmrc
+/Cargo.lock
 /node_modules
+/package-lock.json
 /shared_accounts
 /target
-/Cargo.lock
-/package-lock.json
-
-# Example specific folder
-/*/node_modules
+/yarn-error.log
+/yarn.lock
 /*/target
-/*/Cargo.lock
-/*/package-lock.json

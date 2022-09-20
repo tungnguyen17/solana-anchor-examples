@@ -1,6 +1,7 @@
 [workspace]
 members = [
   "cross_program_invocation_example/programs/*",
+  "durable_transaction_example/programs/*",
   "indirect_transfer_example/programs/*",
   "program_derived_address_example/programs/*",
   "standalone_spl_token_example/programs/*"
