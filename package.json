@@ -15,11 +15,13 @@
   },
   "scripts": {
     "build": "cargo build-bpf",
-    "deploy": "npm run deploy:standalone_spl_token",
+    "deploy": "npm run deploy:durable_transaction && npm run deploy:standalone_spl_token",
+    "deploy:durable_transaction": "solana program deploy ./target/deploy/durable_transaction.so --program-id ./durable_transaction_example/tests/durable_transaction.keypair.json --url localhost",
     "deploy:standalone_spl_token": "solana program deploy ./target/deploy/standalone_spl_token.so --program-id ./standalone_spl_token_example/test/standalone_spl_token.keypair.json --url localhost",
     "maintainance": "npm run build && npm run deploy && npm run test",
-    "test": "npm run test:standalone_spl_token",
-    "test:standalone_spl_token": "ts-mocha -p ./tsconfig.mocha.json ./standalone_spl_token_example/**/*.spec.ts --timeout 10000"
+    "test": "npm run test:durable_transaction && npm run test:standalone_spl_token",
+    "test:durable_transaction": "ts-mocha -p ./tsconfig.mocha.json ./durable_transaction_example/**/*.spec.ts --timeout 50000",
+    "test:standalone_spl_token": "ts-mocha -p ./tsconfig.mocha.json ./standalone_spl_token_example/**/*.spec.ts --timeout 50000"
   },
   "dependencies": {
     "@project-serum/anchor": "^0.24.2",
