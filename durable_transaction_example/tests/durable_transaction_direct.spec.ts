@@ -80,30 +80,6 @@ describe('durable_transaction_direct_test', function() {
     expect(signerCount).equal(3);
   });
 
-  it('invoke_with_2_signers_and_1_non_signer', async function() {
-    const testAccount1 = await TestAccountService.getAccount(1);
-    const testAccount2 = await TestAccountService.getAccount(2);
-    const testAccount3 = await TestAccountService.getAccount(3);
-
-    const signerCount = await DurableTransactionService.invoke(
-      connection,
-      defaultAccount,
-      [
-        testAccount1.publicKey,
-        testAccount2.publicKey,
-        testAccount3.publicKey,
-      ],
-      [
-        testAccount1,
-        testAccount2,
-      ],
-      false,
-      PROGRAM_ID,
-    );
-
-    expect(signerCount).equal(2);
-  });
-
   it('invoke_with_duplicate_signer', async function() {
     const testAccount1 = await TestAccountService.getAccount(1);
     const testAccount2 = await TestAccountService.getAccount(2);

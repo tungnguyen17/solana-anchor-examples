@@ -61,7 +61,7 @@ export class DurableTransactionInstructionService {
       <AccountMeta>{ pubkey: counterAddress, isSigner: false, isWritable: true, },
     ];
     signerAddresses.forEach(addr => {
-      keys.push(<AccountMeta>{ pubkey: addr, isSigner: false, isWritable: false, });
+      keys.push(<AccountMeta>{ pubkey: addr, isSigner: true, isWritable: false, });
     });
 
     return new TransactionInstruction({
@@ -87,7 +87,7 @@ export class DurableTransactionInstructionService {
       <AccountMeta>{ pubkey: counter, isSigner: false, isWritable: true, },
     ];
     signers.forEach(addr => {
-      keys.push(<AccountMeta>{ pubkey: addr, isSigner: false, isWritable: false, });
+      keys.push(<AccountMeta>{ pubkey: addr, isSigner: true, isWritable: false, });
     });
 
     return new TransactionInstruction({
