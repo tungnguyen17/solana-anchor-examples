@@ -1,10 +1,9 @@
 import {
   Connection,
   Keypair,
-  PublicKey,
-  SignaturePubkeyPair,
-  Transaction
+  PublicKey
 } from '@solana/web3.js';
+import { sendRawTransaction } from '@tforcexyz/solana-support-library';
 import {
   SolanaConfigService,
   TestAccountService
@@ -50,21 +49,3 @@ describe('durable_transaction_indirect_test', function() {
     console.info(`Invoke call with 2 signers --- ${txSign}`);
   });
 })
-
-async function sendRawTransaction(
-  connection: Connection,
-  rawTransaction: Buffer,
-  signatures: SignatureTuple[],
-): Promise<string> {
-  const transaction = Transaction.from(rawTransaction);
-  for(let signature of signatures) {
-    transaction.addSignature(signature.publicKey, signature.signature);
-  }
-
-  return connection.sendRawTransaction(transaction.serialize());
-}
-
-interface SignatureTuple {
-  publicKey: PublicKey
-  signature: Buffer
-}
