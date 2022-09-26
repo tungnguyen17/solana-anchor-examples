@@ -3,7 +3,33 @@ export const ED25519_VERIFICATION_IDL = {
   "name": "ed25519_verification",
   "instructions": [
     {
-      "name": "validateMessageSignature",
+      "name": "createCounter",
+      "accounts": [
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "derivationPath",
+          "type": "bytes"
+        }
+      ]
+    },
+    {
+      "name": "compareMessageSignature",
       "accounts": [],
       "args": [
         {
@@ -23,6 +49,49 @@ export const ED25519_VERIFICATION_IDL = {
           "type": "bytes"
         }
       ]
+    },
+    {
+      "name": "validateMessageSignature",
+      "accounts": [
+        {
+          "name": "counter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "instructions",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "message",
+          "type": "bytes"
+        },
+        {
+          "name": "signatures",
+          "type": {
+            "vec": {
+              "defined": "SignatureTuple"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Counter",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "signerCount",
+            "type": "u8"
+          }
+        ]
+      }
     }
   ],
   "types": [

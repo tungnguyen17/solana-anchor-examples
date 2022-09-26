@@ -1,14 +1,10 @@
 use anchor_lang::prelude::*;
 use solana_program::{
   declare_id,
-  instruction::{
-    Instruction,
-  },
-  program::{
-    invoke,
-  },
-  program_error::{
-    ProgramError,
+  sysvar::{
+    instructions::{
+      load_instruction_at_checked,
+    },
   },
 };
 
@@ -71,20 +67,30 @@ pub fn create_message_verification_instruction(
 pub fn verify_message_signatures(
   message: &Vec<u8>,
   signatures: &Vec<SignatureTuple>,
-) -> std::result::Result<(), ProgramError> {
+  sysvar_instructions: &AccountInfo,
+  instruction_index: usize,
+) -> bool {
 
-  let data = create_message_verification_instruction(
+  let data_to_compare = create_message_verification_instruction(
     message,
     signatures,
   );
 
-  let instruction = Instruction {
-    program_id: id(),
-    accounts: vec![],
-    data: data.try_to_vec().unwrap(),
-  };
+  let veri_sign_ix = load_instruction_at_checked(
+      instruction_index,
+      sysvar_instructions,
+    )
+    .unwrap();
+  if veri_sign_ix.program_id != id() {
+    msg!("veri_sign_ix.program_id = {:?}", veri_sign_ix.program_id);
+    return false;
+  }
+  if veri_sign_ix.data.to_owned() != data_to_compare {
+    msg!("veri_sign_ix.data = {:?}", &veri_sign_ix.data);
+    return false;
+  }
 
-  invoke(&instruction, &[])
+  true
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize)]

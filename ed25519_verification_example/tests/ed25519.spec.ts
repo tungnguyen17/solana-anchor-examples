@@ -7,6 +7,7 @@ import {
   HashService
 } from '@tforcexyz/solana-support-library';
 import { SolanaConfigService, TestAccountService } from '@tforcexyz/solana-support-library/config';
+import { expect } from 'chai';
 import { Ed25519VerificationService } from '../client/ed25519_verification.service';
 
 describe('ed25519_verification_test', function() {
@@ -19,11 +20,11 @@ describe('ed25519_verification_test', function() {
     defaultAccount = await SolanaConfigService.getDefaultAccount();
   });
 
-  it('validate_1_signature', async function() {
+  it('compare_1_signature', async function() {
     const message = 'Hello World';
     const messageHash = HashService.sha256(message);
 
-    await Ed25519VerificationService.verifyMessageSignature(
+    await Ed25519VerificationService.compareMessageSignature(
       connection,
       defaultAccount,
       messageHash,
@@ -34,12 +35,12 @@ describe('ed25519_verification_test', function() {
     );
   });
 
-  it('validate_2_signature', async function() {
+  it('compare_2_signatures', async function() {
     const testAccount0 = await TestAccountService.getAccount(0);
     const message = 'High Definition';
     const messageHash = HashService.sha256(message);
 
-    await Ed25519VerificationService.verifyMessageSignature(
+    await Ed25519VerificationService.compareMessageSignature(
       connection,
       defaultAccount,
       messageHash,
@@ -49,5 +50,41 @@ describe('ed25519_verification_test', function() {
       ],
       PROGRAM_ID,
     );
+  });
+
+  it('validate_1_signature', async function() {
+    const message = 'Hello World';
+    const messageHash = HashService.sha256(message);
+
+    const signerCount = await Ed25519VerificationService.verifyMessageSignature(
+      connection,
+      defaultAccount,
+      messageHash,
+      [
+        defaultAccount,
+      ],
+      PROGRAM_ID,
+    );
+
+    expect(signerCount).equal(1);
+  });
+
+  it('validate_2_signatures', async function() {
+    const testAccount0 = await TestAccountService.getAccount(0);
+    const message = 'High Definition';
+    const messageHash = HashService.sha256(message);
+
+    const signerCount = await Ed25519VerificationService.verifyMessageSignature(
+      connection,
+      defaultAccount,
+      messageHash,
+      [
+        defaultAccount,
+        testAccount0,
+      ],
+      PROGRAM_ID,
+    );
+
+    expect(signerCount).equal(2);
   });
 })
