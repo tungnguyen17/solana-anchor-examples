@@ -7,7 +7,7 @@ import {
   SystemProgram,
   Transaction
 } from '@solana/web3.js';
-import { sendTransaction } from '@tforcexyz/solana-support-library';
+import { executeTransaction } from '@tforcexyz/solana-support-library';
 import { DurableTransactionInstructionService } from './durable_transaction_instruction.service';
 
 export class DurableTransactionService {
@@ -50,7 +50,7 @@ export class DurableTransactionService {
       );
     transaction.add(invokeInstruction);
 
-    const txSign = await sendTransaction(
+    const txSign = await executeTransaction(
       connection,
       transaction,
       [
@@ -97,7 +97,7 @@ export class DurableTransactionService {
     });
     transaction.add(initializeNonceInstruction);
 
-    await sendTransaction(
+    await executeTransaction(
       connection,
       transaction,
       [

@@ -5,7 +5,7 @@ import {
 } from '@solana/web3.js';
 import {
   Ed25519InstructionService,
-  sendTransaction
+  executeTransaction
 } from '@tforcexyz/solana-support-library';
 import { SolanaConfigService, TestAccountService } from '@tforcexyz/solana-support-library/config';
 import { SignMessageParams } from '@tforcexyz/solana-support-library/ed25519_instruction.service';
@@ -29,7 +29,7 @@ describe('ed25519_program_instruction_test', function() {
     );
     transaction.add(instruction);
 
-    const txSign = await sendTransaction(
+    const txSign = await executeTransaction(
       connection,
       transaction,
       [
@@ -51,7 +51,7 @@ describe('ed25519_program_instruction_test', function() {
     );
     transaction.add(instruction);
 
-    const txSign = await sendTransaction(
+    const txSign = await executeTransaction(
       connection,
       transaction,
       [
@@ -73,7 +73,7 @@ describe('ed25519_program_instruction_test', function() {
     );
     transaction.add(instruction);
 
-    const txSign = await sendTransaction(
+    const txSign = await executeTransaction(
       connection,
       transaction,
       [
@@ -103,7 +103,7 @@ describe('ed25519_program_instruction_test', function() {
     );
     transaction.add(instruction);
 
-    const txSign = await sendTransaction(
+    const txSign = await executeTransaction(
       connection,
       transaction,
       [

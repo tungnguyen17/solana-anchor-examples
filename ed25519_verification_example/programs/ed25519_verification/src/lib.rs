@@ -1,6 +1,13 @@
 pub mod spl_ed25519;
 
 use anchor_lang::prelude::*;
+use solana_program::{
+  sysvar::{
+    instructions::{
+      ID as SYSVAR_INSTRUCTION_ID,
+    },
+  },
+};
 use spl_ed25519::{
   create_message_verification_instruction,
   SignatureTuple,
@@ -98,6 +105,9 @@ pub struct ValidateMessageSignatureContext<'info> {
   pub counter: Account<'info, Counter>,
 
   /// CHECK: Solana native Instructions SysVar
+  #[account(
+    constraint = instructions.key() == SYSVAR_INSTRUCTION_ID @ErrorCode::InvalidAccount,
+  )]
   pub instructions: AccountInfo<'info>,
 }
 
@@ -109,6 +119,9 @@ pub struct Counter {
 
 #[error_code]
 pub enum ErrorCode {
+
+  #[msg("Invalid account")]
+  InvalidAccount,
 
   #[msg("Invalid input")]
   InvalidInput,

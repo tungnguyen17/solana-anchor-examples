@@ -7,7 +7,7 @@ import {
 import {
   Ed25519InstructionService,
   Ed25519SignService,
-  sendTransaction,
+  executeTransaction,
   SignatureTuple
 } from '@tforcexyz/solana-support-library';
 import { Ed25519VerificationInstructionService } from './ed25519_verification_instruction.service';
@@ -49,7 +49,7 @@ export class Ed25519VerificationService {
 
     transaction.feePayer = payerAccount.publicKey;
 
-    const txSign = await sendTransaction(
+    const txSign = await executeTransaction(
       connection,
       transaction,
       [
@@ -110,7 +110,7 @@ export class Ed25519VerificationService {
 
     transaction.feePayer = payerAccount.publicKey;
 
-    const txSign = await sendTransaction(
+    const txSign = await executeTransaction(
       connection,
       transaction,
       [
