@@ -3,14 +3,12 @@ name = "standalone-spl-token"
 version = "0.1.0"
 authors = ["Tung Nguyen"]
 license = "Apache-2.0"
-edition = "2018"
+edition = "2021"
 workspace = "../../.."
 
-[dependencies]
-anchor-lang = "0.24.2"
-arrayref = "0.3.6"
-num_enum = "0.5.4"
-solana-program = "1.9.14"
+[lib]
+name = "standalone_spl_token"
+crate-type = ["cdylib", "lib"]
 
 [features]
 cpi = ["no-entrypoint"]
@@ -18,6 +16,8 @@ default = []
 no-entrypoint = []
 no-idl = []
 
-[lib]
-name = "standalone_spl_token"
-crate-type = ["cdylib", "lib"]
+[dependencies]
+anchor-lang = "=0.26.0"
+arrayref = "=0.3.6"
+num_enum = "=0.5.7"
+solana-program = "=1.14.15"

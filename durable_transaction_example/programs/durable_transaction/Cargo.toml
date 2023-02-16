@@ -3,12 +3,12 @@ name = "durable-transaction"
 version = "0.1.0"
 authors = ["Tung Nguyen"]
 license = "Apache-2.0"
-edition = "2018"
+edition = "2021"
 workspace = "../../.."
 
-[dependencies]
-anchor-lang = "0.24.2"
-solana-program = "1.9.14"
+[lib]
+name = "durable_transaction"
+crate-type = ["cdylib", "lib"]
 
 [features]
 cpi = ["no-entrypoint"]
@@ -16,6 +16,6 @@ default = []
 no-entrypoint = []
 no-idl = []
 
-[lib]
-name = "durable_transaction"
-crate-type = ["cdylib", "lib"]
+[dependencies]
+anchor-lang = "=0.26.0"
+solana-program = "=1.14.15"
