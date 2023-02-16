@@ -1,0 +1,22 @@
+[package]
+name = "base64-transform"
+version = "0.1.0"
+authors = ["Tung Nguyen"]
+license = "Apache-2.0"
+edition = "2021"
+workspace = "../../.."
+
+[lib]
+name = "base64_transform"
+crate-type = ["cdylib", "lib"]
+
+[features]
+cpi = ["no-entrypoint"]
+default = []
+no-entrypoint = []
+no-idl = []
+
+[dependencies]
+anchor-lang = "=0.26.0"
+base64 = "=0.21.0"
+solana-program = "=1.14.15"

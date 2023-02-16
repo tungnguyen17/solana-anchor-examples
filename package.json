@@ -15,23 +15,25 @@
   },
   "scripts": {
     "build": "cargo build-bpf",
-    "deploy": "npm run deploy:durable_transaction && npm run deploy:standalone_spl_token",
+    "deploy": "npm run deploy:base64_transform && npm run deploy:durable_transaction && npm run deploy:ed25519_verification && npm run deploy:standalone_spl_token",
+    "deploy:base64_transform": "solana program deploy ./target/deploy/base64_transform.so --program-id ./base64_transform_example/tests/base64_transform.keypair.json --url localhost",
     "deploy:durable_transaction": "solana program deploy ./target/deploy/durable_transaction.so --program-id ./durable_transaction_example/tests/durable_transaction.keypair.json --url localhost",
     "deploy:ed25519_verification": "solana program deploy ./target/deploy/ed25519_verification.so --program-id ./ed25519_verification_example/tests/ed25519_verification.keypair.json --url localhost",
     "deploy:standalone_spl_token": "solana program deploy ./target/deploy/standalone_spl_token.so --program-id ./standalone_spl_token_example/test/standalone_spl_token.keypair.json --url localhost",
-    "maintainance": "npm run build && npm run deploy && npm run test",
-    "test": "npm run test:durable_transaction && npm run test:standalone_spl_token",
+    "test": "npm run test:base64_transform && npm run test:durable_transaction && npm run test:ed25519_verification && npm run test:standalone_spl_token",
+    "test:base64_transform": "ts-mocha -p ./tsconfig.mocha.json ./base64_transform_example/**/*.spec.ts --timeout 50000",
     "test:durable_transaction": "ts-mocha -p ./tsconfig.mocha.json ./durable_transaction_example/**/*.spec.ts --timeout 50000",
     "test:ed25519_verification": "ts-mocha -p ./tsconfig.mocha.json ./ed25519_verification_example/**/*.spec.ts --timeout 50000",
     "test:standalone_spl_token": "ts-mocha -p ./tsconfig.mocha.json ./standalone_spl_token_example/**/*.spec.ts --timeout 50000"
   },
   "dependencies": {
-    "@project-serum/anchor": "^0.24.2",
-    "@solana/web3.js": "^1.43.1",
+    "@project-serum/anchor": "^0.26.0",
+    "@solana/web3.js": "^1.50.0",
     "@tforcexyz/solana-support-library": "^0.5.0",
     "bn.js": "^5.2.1"
   },
   "devDependencies": {
+    "@types/bn.js": "^5.1.1",
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
     "chai": "^4.3.6",
@@ -39,6 +41,6 @@
     "mocha": "^10.0.0",
     "ts-mocha": "^10.0.0",
     "ts-node": "^10.0.0",
-    "typescript": "^4.3.2"
+    "typescript": "^4.7.4"
   }
 }

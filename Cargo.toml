@@ -1,5 +1,6 @@
 [workspace]
 members = [
+  "base64_transform_example/programs/*",
   "cross_program_invocation_example/programs/*",
   "durable_transaction_example/programs/*",
   "ed25519_verification_example/programs/*",
