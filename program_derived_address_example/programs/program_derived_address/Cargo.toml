@@ -17,5 +17,5 @@ no-entrypoint = []
 no-idl = []
 
 [dependencies]
-anchor-lang = "=0.26.0"
-solana-program = "=1.14.15"
+anchor-lang = "~0.26.0"
+solana-program = "~1.14.17"
